@@ -90,6 +90,18 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .yorum-metni{color:#d8d8e0;line-height:1.7;white-space:pre-wrap;margin:0}
 .alt-bilgi{border-top:1px solid #292932;padding:25px 20px;text-align:center;color:var(--soluk);font-size:13px}
 
+/* Masa tenisi */
+.ping-bolumu{margin-top:35px;padding-top:28px;border-top:1px solid #292932}
+.ping-panel{padding:18px;background:var(--kart);border:1px solid #30303a;border-radius:12px}
+.ping-ust{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ping-durum{color:var(--soluk);font-size:14px;line-height:1.7}
+.ping-dugme{border:0;border-radius:8px;padding:11px 16px;background:var(--kirmizi);color:#fff;font-weight:bold;cursor:pointer}
+.ping-dugme:disabled{opacity:.55;cursor:not-allowed}
+.ping-dugme.ikincil{background:#343440}
+.ping-kanvas-kutu{margin-top:14px;padding:7px;background:#09090e;border:1px solid #393943;border-radius:10px}
+#ping-kanvas{display:block;width:100%;height:auto;touch-action:none;border-radius:6px}
+.ping-skor{text-align:center;font-size:26px;font-weight:800;margin:14px 0}
+.ping-yardim{font-size:13px;color:var(--soluk);line-height:1.7;margin:10px 0 0}
 @media(max-width:600px){
  .menu-icerik{align-items:flex-start;flex-direction:column}
  .ana-icerik{padding:22px 14px 40px}
@@ -102,6 +114,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
  .emoji-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
  .gif-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .gif-sec img{height:95px}
+ .ping-panel{padding:12px}
 }
 </style>
 </head>
@@ -175,6 +188,26 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
           </div>
           <p class="chat-bilgi" id="chat-bilgi" role="status" aria-live="polite"></p>
         </form>
+      </div>
+    </section>
+
+    <!-- İKİ KİŞİLİK MASA TENİSİ -->
+    <section class="ping-bolumu" aria-labelledby="ping-baslik">
+      <h2 class="chat-baslik" id="ping-baslik">🏓 Film Arası: Masa Tenisi</h2>
+      <p class="chat-alt">Aynı filmi izleyen bir arkadaşınla istersen maç yap!</p>
+      <div class="ping-panel">
+        <div class="ping-ust">
+          <p class="ping-durum" id="ping-durum">Oyuna katılarak bir raket seç.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="ping-dugme" id="ping-katil" type="button">🏓 Oyuna Katıl</button>
+            <button class="ping-dugme ikincil" id="ping-ayril" type="button">Ayrıl</button>
+          </div>
+        </div>
+        <div class="ping-kanvas-kutu">
+          <canvas id="ping-kanvas" width="800" height="450" aria-label="Masa tenisi oyun alanı"></canvas>
+        </div>
+        <div class="ping-skor"><span id="ping-skor-sol">0</span> — <span id="ping-skor-sag">0</span></div>
+        <p class="ping-yardim">Bilgisayarda W/S veya ↑/↓ tuşlarını kullan. Telefonda oyun alanının kendi tarafında parmağını yukarı-aşağı kaydır. İlk 5 sayıya ulaşan kazanır. İkiniz de aynı filmin sayfasında olmalısınız.</p>
       </div>
     </section>
 
@@ -650,6 +683,327 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     yorumMesaj.textContent = metin;
     yorumMesaj.style.color = hata ? "#ff737c" : "var(--soluk)";
   }
+
+  /* MASA TENİSİ - SUPABASE REALTIME BROADCAST */
+  const ping = {
+    kanal:null,
+    oyuncuId:crypto.randomUUID(),
+    rol:0,
+    katildi:false,
+    oyuncular:[],
+    raketSol:180,
+    raketSag:180,
+    top:{x:400,y:225,vx:5,vy:2},
+    solSkor:0,
+    sagSkor:0,
+    sonTopZamani:0,
+    sonRaketZamani:0,
+    sonKare:0,
+    animasyon:0,
+    bitti:false
+  };
+
+  const pingCanvas = $("ping-kanvas");
+  const pingCtx = pingCanvas.getContext("2d");
+
+  function pingDurum(metin){
+    $("ping-durum").textContent = metin;
+  }
+
+  function pingSkorGuncelle(){
+    $("ping-skor-sol").textContent = ping.solSkor;
+    $("ping-skor-sag").textContent = ping.sagSkor;
+  }
+
+  function pingTopSifirla(yon){
+    ping.top = {
+      x:400,y:225,
+      vx:5*yon,
+      vy:(Math.random()*4)-2
+    };
+  }
+
+  function pingCiz(){
+    const c = pingCtx;
+    c.clearRect(0,0,800,450);
+    c.fillStyle="#090b12";
+    c.fillRect(0,0,800,450);
+
+    c.strokeStyle="#454557";
+    c.lineWidth=2;
+    c.setLineDash([10,12]);
+    c.beginPath();
+    c.moveTo(400,0);
+    c.lineTo(400,450);
+    c.stroke();
+    c.setLineDash([]);
+
+    c.fillStyle="#e74752";
+    c.fillRect(22,ping.raketSol,13,85);
+    c.fillStyle="#38bdf8";
+    c.fillRect(765,ping.raketSag,13,85);
+
+    c.fillStyle="#fff";
+    c.beginPath();
+    c.arc(ping.top.x,ping.top.y,9,0,Math.PI*2);
+    c.fill();
+
+    c.font="bold 15px Arial";
+    c.fillStyle="#aaaab6";
+    c.fillText(ping.rol===1?"SEN (SOL)":"OYUNCU 1",22,24);
+    c.fillText(ping.rol===2?"SEN (SAĞ)":"OYUNCU 2",680,24);
+
+    if(!ping.katildi || ping.oyuncular.length<2 || ping.bitti){
+      c.fillStyle="rgba(0,0,0,.65)";
+      c.fillRect(130,175,540,100);
+      c.fillStyle="#fff";
+      c.textAlign="center";
+      c.font="bold 22px Arial";
+      let yazi="Oyuna katılmak için düğmeye bas";
+      if(ping.katildi && ping.oyuncular.length<2) yazi="Rakibin bekleniyor...";
+      if(ping.bitti) yazi=(ping.solSkor>=5?"Oyuncu 1":"Oyuncu 2")+" kazandı!";
+      c.fillText(yazi,400,220);
+      c.font="14px Arial";
+      c.fillStyle="#d1d1da";
+      c.fillText("Aynı film sayfasında iki oyuncu gerekir",400,247);
+      c.textAlign="left";
+    }
+  }
+
+  async function pingYayinla(topDahil=false){
+    if(!ping.kanal || !ping.katildi || !ping.rol) return;
+    const now=Date.now();
+    if(topDahil){
+      if(now-ping.sonTopZamani<30) return;
+      ping.sonTopZamani=now;
+    }else{
+      if(now-ping.sonRaketZamani<35) return;
+      ping.sonRaketZamani=now;
+    }
+
+    const payload={
+      id:ping.oyuncuId,
+      rol:ping.rol,
+      y:ping.rol===1?ping.raketSol:ping.raketSag,
+      solSkor:ping.solSkor,
+      sagSkor:ping.sagSkor,
+      top:topDahil?ping.top:null,
+      zaman:now
+    };
+
+    try{
+      await ping.kanal.send({type:"broadcast",event:"ping-durum",payload});
+    }catch(e){
+      console.warn("Masa tenisi durumu gönderilemedi:",e);
+    }
+  }
+
+  function pingDurumAl(payload){
+    if(!payload || payload.id===ping.oyuncuId) return;
+
+    if(payload.rol===1){
+      ping.raketSol=Number.isFinite(payload.y)?payload.y:ping.raketSol;
+      if(payload.top && payload.zaman>ping.sonTopZamani){
+        ping.top=payload.top;
+        ping.sonTopZamani=payload.zaman;
+        ping.solSkor=payload.solSkor??ping.solSkor;
+        ping.sagSkor=payload.sagSkor??ping.sagSkor;
+        ping.bitti=ping.solSkor>=5||ping.sagSkor>=5;
+        pingSkorGuncelle();
+      }
+    }else if(payload.rol===2){
+      ping.raketSag=Number.isFinite(payload.y)?payload.y:ping.raketSag;
+      ping.solSkor=payload.solSkor??ping.solSkor;
+      ping.sagSkor=payload.sagSkor??ping.sagSkor;
+      ping.bitti=ping.solSkor>=5||ping.sagSkor>=5;
+      pingSkorGuncelle();
+    }
+
+    if(ping.bitti){
+      pingDurum((ping.solSkor>=5?"Sol oyuncu":"Sağ oyuncu")+" kazandı! Yeniden maç için iki oyuncu da ayrılıp tekrar katılsın.");
+    }
+    pingCiz();
+  }
+
+  function pingKare(zaman){
+    if(!ping.katildi) return;
+    const dt=Math.min((zaman-(ping.sonKare||zaman))/16.67,2);
+    ping.sonKare=zaman;
+
+    if(ping.rol===1 && ping.oyuncular.length>=2 && !ping.bitti){
+      const b=ping.top;
+      b.x+=b.vx*dt;
+      b.y+=b.vy*dt;
+
+      if(b.y<9){b.y=9;b.vy=Math.abs(b.vy);}
+      if(b.y>441){b.y=441;b.vy=-Math.abs(b.vy);}
+
+      if(b.x<=45 && b.x>=25 && b.vx<0 &&
+         b.y>=ping.raketSol-5 && b.y<=ping.raketSol+90){
+        b.x=46;
+        b.vx=Math.min(11,Math.abs(b.vx)*1.04);
+        b.vy+=(b.y-(ping.raketSol+42))*0.06;
+      }
+
+      if(b.x>=755 && b.x<=775 && b.vx>0 &&
+         b.y>=ping.raketSag-5 && b.y<=ping.raketSag+90){
+        b.x=754;
+        b.vx=-Math.min(11,Math.abs(b.vx)*1.04);
+        b.vy+=(b.y-(ping.raketSag+42))*0.06;
+      }
+
+      if(b.x<0){
+        ping.sagSkor++;
+        pingTopSifirla(1);
+        pingSkorGuncelle();
+      }else if(b.x>800){
+        ping.solSkor++;
+        pingTopSifirla(-1);
+        pingSkorGuncelle();
+      }
+
+      if(ping.solSkor>=5 || ping.sagSkor>=5){
+        ping.bitti=true;
+        pingDurum((ping.solSkor>=5?"Sol oyuncu":"Sağ oyuncu")+" kazandı! Yeniden maç için iki oyuncu da ayrılıp tekrar katılsın.");
+      }
+
+      pingYayinla(true);
+    }
+
+    pingCiz();
+    ping.animasyon=requestAnimationFrame(pingKare);
+  }
+
+  function pingRaketHareket(y){
+    if(!ping.katildi || !ping.rol || ping.bitti) return;
+    const yeni=Math.max(0,Math.min(365,y-42));
+    if(ping.rol===1) ping.raketSol=yeni;
+    if(ping.rol===2) ping.raketSag=yeni;
+    pingCiz();
+    pingYayinla(false);
+  }
+
+  function pingTusaBas(event){
+    if(!ping.katildi || !ping.rol || ping.bitti) return;
+    const tus=event.key.toLowerCase();
+    let yon=0;
+    if(tus==="w" || tus==="arrowup") yon=-1;
+    if(tus==="s" || tus==="arrowdown") yon=1;
+    if(!yon) return;
+
+    event.preventDefault();
+    const mevcut=ping.rol===1?ping.raketSol:ping.raketSag;
+    pingRaketHareket(mevcut+yon*24);
+  }
+
+  document.addEventListener("keydown",pingTusaBas);
+
+  function pingIsaretHareket(event){
+    if(!ping.katildi || !ping.rol) return;
+    const rect=pingCanvas.getBoundingClientRect();
+    const y=(event.clientY-rect.top)*(pingCanvas.height/rect.height);
+    const x=(event.clientX-rect.left)*(pingCanvas.width/rect.width);
+
+    /* Oyuncu yalnızca kendi yarısında raketini kontrol eder. */
+    if((ping.rol===1 && x<=400)||(ping.rol===2 && x>=400)){
+      pingRaketHareket(y);
+    }
+  }
+
+  pingCanvas.addEventListener("pointerdown",event=>{
+    if(!ping.katildi) return;
+    pingCanvas.setPointerCapture(event.pointerId);
+    pingIsaretHareket(event);
+  });
+
+  pingCanvas.addEventListener("pointermove",event=>{
+    if(event.buttons || event.pointerType==="touch") pingIsaretHareket(event);
+  });
+
+  async function pingKatil(){
+    if(ping.katildi) return;
+    const filmId=new URLSearchParams(location.search).get("id");
+    if(!filmId || !client){
+      pingDurum("Film veya Supabase bağlantısı hazır değil. Sayfayı yenile.");
+      return;
+    }
+
+    $("ping-katil").disabled=true;
+    pingDurum("Oyun odasına bağlanılıyor...");
+
+    try{
+      ping.kanal=client.channel("bengusflix-ping-"+String(filmId).replace(/[^a-zA-Z0-9_-]/g,"_"),{
+        config:{presence:{key:ping.oyuncuId},broadcast:{self:false}}
+      });
+
+      ping.kanal
+        .on("presence",{event:"sync"},async()=>{
+          const state=ping.kanal.presenceState();
+          ping.oyuncular=Object.keys(state).sort();
+          const eskiRol=ping.rol;
+          const index=ping.oyuncular.indexOf(ping.oyuncuId);
+          ping.rol=index===0?1:index===1?2:0;
+
+          if(ping.rol===0){
+            pingDurum("Oda dolu. İki oyuncu oynuyor; istersen oyunu izleyebilirsin.");
+          }else{
+            pingDurum(
+              "Sen: "+(ping.rol===1?"sol raket 🔴":"sağ raket 🔵")+
+              (ping.oyuncular.length<2?" · Rakip bekleniyor...":" · Rakip bağlandı!")
+            );
+            if(eskiRol!==ping.rol && ping.rol===1){
+              ping.solSkor=0;
+              ping.sagSkor=0;
+              ping.bitti=false;
+              pingTopSifirla(1);
+              pingSkorGuncelle();
+            }
+          }
+          pingCiz();
+          await pingYayinla(ping.rol===1);
+        })
+        .on("broadcast",{event:"ping-durum"},({payload})=>pingDurumAl(payload))
+        .subscribe(async state=>{
+          if(state==="SUBSCRIBED"){
+            ping.katildi=true;
+            await ping.kanal.track({online_at:new Date().toISOString()});
+            $("ping-katil").disabled=false;
+            cancelAnimationFrame(ping.animasyon);
+            ping.animasyon=requestAnimationFrame(pingKare);
+            pingDurum("Oyun odasına bağlandın. Rakibin katılmasını bekle.");
+            pingCiz();
+          }else if(state==="CHANNEL_ERROR" || state==="TIMED_OUT"){
+            pingDurum("Bağlantı kurulamadı. Tekrar katılmayı dene.");
+            $("ping-katil").disabled=false;
+          }
+        });
+    }catch(error){
+      console.error("Masa tenisi bağlantı hatası:",error);
+      pingDurum("Oyun bağlantısı kurulamadı. Supabase Realtime ayarlarını kontrol et.");
+      $("ping-katil").disabled=false;
+    }
+  }
+
+  async function pingAyril(){
+    ping.katildi=false;
+    ping.rol=0;
+    ping.oyuncular=[];
+    cancelAnimationFrame(ping.animasyon);
+    if(ping.kanal){
+      try{await client.removeChannel(ping.kanal);}catch(_){}
+      ping.kanal=null;
+    }
+    $("ping-katil").disabled=false;
+    pingDurum("Oyundan ayrıldın. İstersen tekrar katılabilirsin.");
+    pingCiz();
+  }
+
+  $("ping-katil").addEventListener("click",pingKatil);
+  $("ping-ayril").addEventListener("click",pingAyril);
+  window.addEventListener("pagehide",()=>{
+    if(ping.kanal && client) client.removeChannel(ping.kanal);
+  });
+  pingCiz();
 
   try{
     const params = new URLSearchParams(location.search);
