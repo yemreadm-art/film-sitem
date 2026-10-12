@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101014">
-<title>Film İzle | Film Arşivim</title>
+<title>Film İzle | BengüşFlix</title>
 
 <style>
 :root {
@@ -142,8 +142,9 @@ a {
 <header class="ust-menu">
   <div class="menu-icerik">
     <a class="logo" href="./index.html">
-      FİLM<span>ARŞİVİ</span>
+      Bengüş<span>Flix</span>
     </a>
+
     <a class="geri" href="./index.html#filmler">
       ← Film arşivine dön
     </a>
@@ -166,7 +167,7 @@ a {
 </main>
 
 <footer class="alt-bilgi">
-  © 2026 Film Arşivim
+  © 2026 BengüşFlix
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -201,17 +202,14 @@ a {
       } else if (
         host === "youtube.com" ||
         host === "m.youtube.com" ||
-        host === "youtube-nocookie.com" ||
-        host === "www.youtube-nocookie.com"
+        host === "youtube-nocookie.com"
       ) {
         if (url.pathname === "/watch") {
           id = url.searchParams.get("v") || "";
         } else {
           const parcalar = url.pathname.split("/").filter(Boolean);
 
-          if (
-            ["embed", "shorts", "live"].includes(parcalar[0])
-          ) {
+          if (["embed", "shorts", "live"].includes(parcalar[0])) {
             id = parcalar[1] || "";
           }
         }
@@ -241,7 +239,7 @@ a {
       );
     }
 
-    // Ana sayfayla aynı bağlantı ayarları kullanılır.
+    // Çalışan sistemdeki Supabase ayarları aynen korunur.
     const istemci = window.supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_PUBLISHABLE_KEY
@@ -290,6 +288,7 @@ a {
 
     if (videoId) {
       const iframe = document.createElement("iframe");
+
       iframe.src =
         "https://www.youtube-nocookie.com/embed/" +
         encodeURIComponent(videoId);
@@ -302,17 +301,17 @@ a {
 
       videoKapsayici.replaceChildren(iframe);
     } else {
-      videoKapsayici.textContent = "";
       const mesaj = document.createElement("p");
       mesaj.className = "durum";
       mesaj.textContent =
-        "Bu film için geçerli bir YouTube bağlantısı bulunamadı. Yönetim panelinden bağlantıyı kontrol et.";
-      videoKapsayici.appendChild(mesaj);
+        "Geçerli bir YouTube bağlantısı bulunamadı. Yönetim panelinden film bağlantısını kontrol et.";
+
+      videoKapsayici.replaceChildren(mesaj);
     }
 
     durum.hidden = true;
     icerik.hidden = false;
-    document.title = (film.title || "Film İzle") + " | Film Arşivim";
+    document.title = (film.title || "Film İzle") + " | BengüşFlix";
 
   } catch (hata) {
     console.error("Film görüntüleme hatası:", hata);
