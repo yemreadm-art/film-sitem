@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -99,42 +99,69 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
     <section class="panel" id="film-form-paneli">
       <h2 id="form-basligi">Yeni Film Ekle</h2>
       <p class="muted">Düzenlemek için aşağıdaki listeden bir film seç. Form mevcut bilgilerle doldurulacak.</p>
+
       <form id="film-formu">
         <input type="hidden" id="film-id">
+
         <div class="form-grid">
           <div class="field full">
             <label for="film-adi">Film adı *</label>
             <input id="film-adi" maxlength="200" required>
           </div>
-          <div class="field full">
-            <label for="youtube">YouTube bağlantısı</label>
-            <input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=...">
+
+          <div class="field">
+            <label for="video-platform">Video platformu</label>
+            <select id="video-platform">
+              <option value="youtube">YouTube</option>
+              <option value="mailru">Mail.ru</option>
+            </select>
           </div>
+
+          <div class="field">
+            <label for="youtube" id="video-link-label">YouTube video bağlantısı</label>
+            <input
+              id="youtube"
+              type="url"
+              placeholder="https://www.youtube.com/watch?v=..."
+              autocomplete="url"
+            >
+          </div>
+
           <div class="field">
             <label for="tur">Tür</label>
             <input id="tur" maxlength="100" placeholder="Aksiyon, dram...">
           </div>
+
           <div class="field">
             <label for="yil">Yıl</label>
             <input id="yil" type="number" min="1888" max="2100" placeholder="2026">
           </div>
+
           <div class="field">
             <label for="puan">Puan</label>
             <input id="puan" type="number" min="0" max="10" step="0.1" placeholder="8.5">
           </div>
+
           <div class="field">
             <label for="afis">Afiş bağlantısı</label>
             <input id="afis" type="url" placeholder="https://...">
           </div>
+
           <div class="field full">
             <label for="aciklama">Film açıklaması</label>
             <textarea id="aciklama" maxlength="5000" placeholder="Film hakkında kısa bilgi..."></textarea>
           </div>
         </div>
+
+        <p class="muted" id="video-yardim">
+          YouTube video bağlantısını buraya yapıştır. YouTube izleme ve kısa video bağlantıları desteklenir.
+        </p>
+
         <div class="actions">
           <button class="btn" id="kaydet-dugmesi" type="submit">Filmi Kaydet</button>
           <button class="btn secondary hidden" id="iptal-dugmesi" type="button">Düzenlemeyi İptal Et</button>
         </div>
+
         <div class="status" id="form-durumu" role="status"></div>
       </form>
     </section>
@@ -151,9 +178,11 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase-config.js"></script>
+
 <script>
 (async function(){
   const $ = id => document.getElementById(id);
+
   const loginPanel = $("giris-paneli");
   const adminArea = $("yonetim-alani");
   const loginStatus = $("giris-durumu");
@@ -163,6 +192,9 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
   const count = $("film-sayisi");
   const form = $("film-formu");
   const saveButton = $("kaydet-dugmesi");
+  const videoPlatform = $("video-platform");
+  const videoInput = $("youtube");
+
   let client = null;
   let movies = [];
   let busy = false;
@@ -171,42 +203,132 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
     el.textContent = text;
     el.className = "status" + (type ? " " + type : "");
   }
+
   function make(tag, className, text){
     const el = document.createElement(tag);
     if(className) el.className = className;
     if(text !== undefined) el.textContent = text;
     return el;
   }
+
+  function parseUrl(value){
+    try{
+      const url = new URL(value);
+      if(url.protocol !== "https:" && url.protocol !== "http:"){
+        return null;
+      }
+      return url;
+    }catch(error){
+      return null;
+    }
+  }
+
   function validUrl(value){
     if(!value) return true;
-    try{
-      const u = new URL(value);
-      return u.protocol === "https:" || u.protocol === "http:";
-    }catch(e){ return false; }
+    return !!parseUrl(value);
   }
+
+  function detectPlatform(value){
+    const url = parseUrl(value);
+    if(!url) return "youtube";
+
+    const host = url.hostname.toLowerCase();
+
+    if(
+      host === "my.mail.ru" &&
+      /^\/video\/embed\/\d+\/?$/.test(url.pathname)
+    ){
+      return "mailru";
+    }
+
+    return "youtube";
+  }
+
+  function validVideoUrl(value, platform){
+    if(!value) return true;
+
+    const url = parseUrl(value);
+    if(!url) return false;
+
+    const host = url.hostname.toLowerCase();
+
+    if(platform === "mailru"){
+      return host === "my.mail.ru" &&
+        /^\/video\/embed\/\d+\/?$/.test(url.pathname);
+    }
+
+    const youtubeHosts = [
+      "youtube.com",
+      "www.youtube.com",
+      "m.youtube.com",
+      "music.youtube.com",
+      "youtu.be",
+      "youtube-nocookie.com",
+      "www.youtube-nocookie.com"
+    ];
+
+    if(!youtubeHosts.includes(host)) return false;
+
+    if(host === "youtu.be"){
+      return url.pathname.length > 1;
+    }
+
+    if(url.pathname === "/watch"){
+      return !!url.searchParams.get("v");
+    }
+
+    return /^\/(embed|shorts|live)\/[^/]+/.test(url.pathname);
+  }
+
+  function updateVideoHelp(){
+    if(videoPlatform.value === "mailru"){
+      $("video-link-label").textContent = "Mail.ru video bağlantısı";
+      videoInput.placeholder = "https://my.mail.ru/video/embed/3220810247446724706?autoplay=1";
+      $("video-yardim").textContent =
+        "Mail.ru videosunun tam bağlantısını yapıştır. Bağlantı /video/embed/ ve video numarası içermelidir.";
+    }else{
+      $("video-link-label").textContent = "YouTube video bağlantısı";
+      videoInput.placeholder = "https://www.youtube.com/watch?v=...";
+      $("video-yardim").textContent =
+        "YouTube izleme, kısa video ve embed bağlantılarını kullanabilirsin.";
+    }
+  }
+
   function clearForm(){
     form.reset();
     $("film-id").value = "";
+    videoPlatform.value = "youtube";
+    updateVideoHelp();
     $("form-basligi").textContent = "Yeni Film Ekle";
     saveButton.textContent = "Filmi Kaydet";
     $("iptal-dugmesi").classList.add("hidden");
     message(formStatus, "");
   }
+
   function editMovie(movie){
     $("film-id").value = movie.id;
     $("film-adi").value = movie.title || "";
-    $("youtube").value = movie.youtube || "";
+    videoInput.value = movie.youtube || "";
+    videoPlatform.value = detectPlatform(movie.youtube || "");
+    updateVideoHelp();
+
     $("tur").value = movie.genre || "";
     $("yil").value = movie.year ?? "";
     $("puan").value = movie.rating ?? "";
     $("afis").value = movie.poster || "";
     $("aciklama").value = movie.description || "";
+
     $("form-basligi").textContent = "Film Bilgilerini Güncelle";
     saveButton.textContent = "Değişiklikleri Kaydet";
     $("iptal-dugmesi").classList.remove("hidden");
+
     message(formStatus, "Düzenleme modu: " + (movie.title || "Film"));
-    $("film-form-paneli").scrollIntoView({behavior:"smooth",block:"start"});
+    $("film-form-paneli").scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
   }
+
   function renderMovies(){
     list.replaceChildren();
     count.textContent = movies.length + " film kayıtlı.";
@@ -218,6 +340,7 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
 
     movies.forEach(movie => {
       const row = make("article","movie");
+
       if(movie.poster && validUrl(movie.poster)){
         const img = make("img");
         img.src = movie.poster;
@@ -231,12 +354,36 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
 
       const details = make("div");
       details.appendChild(make("h3","",movie.title || "İsimsiz film"));
-      const meta = [movie.year, movie.genre, movie.rating !== null && movie.rating !== undefined ? "★ " + movie.rating : ""].filter(Boolean);
-      details.appendChild(make("p","",meta.join(" · ") || "Ek bilgi yok"));
-      if(movie.youtube) details.appendChild(make("p","","YouTube bağlantısı kayıtlı"));
+
+      const meta = [
+        movie.year,
+        movie.genre,
+        movie.rating !== null && movie.rating !== undefined
+          ? "★ " + movie.rating
+          : ""
+      ].filter(Boolean);
+
+      details.appendChild(
+        make("p","",meta.join(" · ") || "Ek bilgi yok")
+      );
+
+      if(movie.youtube){
+        const platform = detectPlatform(movie.youtube);
+        details.appendChild(
+          make(
+            "p",
+            "",
+            platform === "mailru"
+              ? "Mail.ru video bağlantısı kayıtlı"
+              : "YouTube bağlantısı kayıtlı"
+          )
+        );
+      }
+
       row.appendChild(details);
 
       const actions = make("div","movie-actions");
+
       const edit = make("button","btn secondary","Düzenle");
       edit.type = "button";
       edit.addEventListener("click",() => editMovie(movie));
@@ -254,11 +401,15 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
   async function loadMovies(){
     message(status,"Filmler yükleniyor...");
     $("yenile-dugmesi").disabled = true;
+
     try{
-      const result = await client.from("movies")
+      const result = await client
+        .from("movies")
         .select("id,title,youtube,genre,year,rating,poster,description,featured,created_at")
         .order("created_at",{ascending:false});
+
       if(result.error) throw result.error;
+
       movies = result.data || [];
       renderMovies();
       message(status,"Film listesi güncellendi.","ok");
@@ -271,17 +422,39 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
   }
 
   async function deleteMovie(movie){
-    if(!confirm('"' + movie.title + '" filmini silmek istediğine emin misin?\nBu işlem geri alınamaz.')) return;
+    if(!confirm(
+      '"' + movie.title + '" filmini silmek istediğine emin misin?\nBu işlem geri alınamaz.'
+    )){
+      return;
+    }
+
     message(status,"Film siliniyor...");
+
     try{
-      const result = await client.from("movies").delete().eq("id",movie.id).select("id");
+      const result = await client
+        .from("movies")
+        .delete()
+        .eq("id",movie.id)
+        .select("id");
+
       if(result.error) throw result.error;
+
       if(!result.data || result.data.length === 0){
-        throw new Error("Kayıt silinemedi. Supabase DELETE iznini kontrol et.");
+        throw new Error(
+          "Kayıt silinemedi. Supabase DELETE iznini kontrol et."
+        );
       }
-      movies = movies.filter(item => String(item.id) !== String(movie.id));
+
+      movies = movies.filter(
+        item => String(item.id) !== String(movie.id)
+      );
+
       renderMovies();
-      if(String($("film-id").value) === String(movie.id)) clearForm();
+
+      if(String($("film-id").value) === String(movie.id)){
+        clearForm();
+      }
+
       message(status,"Film başarıyla silindi.","ok");
     }catch(error){
       message(status,"Silme işlemi başarısız: " + error.message,"error");
@@ -296,9 +469,16 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
   }
 
   try{
-    if(!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_PUBLISHABLE_KEY){
-      throw new Error("Supabase ayarları bulunamadı. supabase-config.js dosyasını kontrol et.");
+    if(
+      !window.supabase ||
+      !window.SUPABASE_URL ||
+      !window.SUPABASE_PUBLISHABLE_KEY
+    ){
+      throw new Error(
+        "Supabase ayarları bulunamadı. supabase-config.js dosyasını kontrol et."
+      );
     }
+
     client = window.supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_PUBLISHABLE_KEY
@@ -309,17 +489,40 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
     return;
   }
 
+  videoPlatform.addEventListener("change",updateVideoHelp);
+
+  videoInput.addEventListener("input",()=>{
+    const value = videoInput.value.trim();
+
+    if(value){
+      const detected = detectPlatform(value);
+      const url = parseUrl(value);
+
+      if(url && (
+        url.hostname.toLowerCase() === "my.mail.ru" ||
+        videoPlatform.value === "mailru"
+      )){
+        videoPlatform.value = detected;
+        updateVideoHelp();
+      }
+    }
+  });
+
   $("giris-formu").addEventListener("submit",async event=>{
     event.preventDefault();
+
     const button = $("giris-dugmesi");
     button.disabled = true;
     message(loginStatus,"Giriş yapılıyor...");
+
     try{
       const result = await client.auth.signInWithPassword({
         email:$("eposta").value.trim(),
         password:$("sifre").value
       });
+
       if(result.error) throw result.error;
+
       $("sifre").value = "";
       await showAdmin(result.data.user);
     }catch(error){
@@ -335,7 +538,8 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
 
     const id = $("film-id").value;
     const title = $("film-adi").value.trim();
-    const youtube = $("youtube").value.trim();
+    const youtube = videoInput.value.trim();
+    const platform = videoPlatform.value;
     const genre = $("tur").value.trim();
     const yearValue = $("yil").value;
     const ratingValue = $("puan").value;
@@ -346,8 +550,40 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
       message(formStatus,"Film adı zorunludur.","error");
       return;
     }
-    if(!validUrl(youtube) || !validUrl(poster)){
-      message(formStatus,"Bağlantılar http:// veya https:// ile başlamalıdır.","error");
+
+    if(!validUrl(poster)){
+      message(
+        formStatus,
+        "Afiş bağlantısı http:// veya https:// ile başlamalıdır.",
+        "error"
+      );
+      return;
+    }
+
+    if(!validVideoUrl(youtube,platform)){
+      message(
+        formStatus,
+        platform === "mailru"
+          ? "Geçerli bir Mail.ru video bağlantısı gir. Örnek: https://my.mail.ru/video/embed/3220810247446724706"
+          : "Geçerli bir YouTube video bağlantısı gir. YouTube izleme, youtu.be, shorts, live ve embed bağlantıları desteklenir.",
+        "error"
+      );
+      return;
+    }
+
+    if(yearValue && (
+      Number(yearValue) < 1888 ||
+      Number(yearValue) > 2100
+    )){
+      message(formStatus,"Film yılı 1888 ile 2100 arasında olmalıdır.","error");
+      return;
+    }
+
+    if(ratingValue !== "" && (
+      Number(ratingValue) < 0 ||
+      Number(ratingValue) > 10
+    )){
+      message(formStatus,"Film puanı 0 ile 10 arasında olmalıdır.","error");
       return;
     }
 
@@ -363,20 +599,46 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
 
     busy = true;
     saveButton.disabled = true;
-    message(formStatus,id ? "Değişiklikler kaydediliyor..." : "Film ekleniyor...");
+
+    message(
+      formStatus,
+      id ? "Değişiklikler kaydediliyor..." : "Film ekleniyor..."
+    );
+
     try{
       let result;
+
       if(id){
-        result = await client.from("movies").update(payload).eq("id",id).select().single();
+        result = await client
+          .from("movies")
+          .update(payload)
+          .eq("id",id)
+          .select()
+          .single();
       }else{
-        result = await client.from("movies").insert(payload).select().single();
+        result = await client
+          .from("movies")
+          .insert(payload)
+          .select()
+          .single();
       }
+
       if(result.error) throw result.error;
-      message(formStatus,id ? "Film başarıyla güncellendi." : "Film başarıyla eklendi.","ok");
+
+      message(
+        formStatus,
+        id ? "Film başarıyla güncellendi." : "Film başarıyla eklendi.",
+        "ok"
+      );
+
       clearForm();
       await loadMovies();
     }catch(error){
-      message(formStatus,"Kayıt işlemi başarısız: " + error.message,"error");
+      message(
+        formStatus,
+        "Kayıt işlemi başarısız: " + error.message,
+        "error"
+      );
     }finally{
       busy = false;
       saveButton.disabled = false;
@@ -385,17 +647,31 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
 
   $("iptal-dugmesi").addEventListener("click",clearForm);
   $("yenile-dugmesi").addEventListener("click",loadMovies);
+
   $("cikis-dugmesi").addEventListener("click",async()=>{
-    await client.auth.signOut();
+    const result = await client.auth.signOut();
+
+    if(result.error){
+      message(status,"Çıkış yapılamadı: " + result.error.message,"error");
+      return;
+    }
+
     adminArea.classList.add("hidden");
     loginPanel.classList.remove("hidden");
     clearForm();
     message(loginStatus,"Güvenli çıkış yapıldı.","ok");
   });
 
+  updateVideoHelp();
+
   const sessionResult = await client.auth.getSession();
+
   if(sessionResult.error){
-    message(loginStatus,"Oturum kontrol edilemedi: "+sessionResult.error.message,"error");
+    message(
+      loginStatus,
+      "Oturum kontrol edilemedi: " + sessionResult.error.message,
+      "error"
+    );
   }else if(sessionResult.data.session){
     await showAdmin(sessionResult.data.session.user);
   }
@@ -403,3 +679,4 @@ footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid va
 </script>
 </body>
 </html>
+```
