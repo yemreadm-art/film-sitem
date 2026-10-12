@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -209,6 +208,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase-config.js"></script>
+<script src="./presence.js"></script>
 
 <script>
 (async function(){
@@ -252,35 +252,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     "🍿","🎬","🎥","🎉","👀","🤝","💀","🤡"
   ];
 
-  /*
-   * API anahtarı gerektirmeyen, önceden seçilmiş GIF'ler.
-   * Harici GIF kaynakları zamanla değişebilir.
-   */
   const GIF_KOLEKSIYONU = [
-    {
-      ad:"Başparmak",
-      url:"https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif"
-    },
-    {
-      ad:"Şaşkınlık",
-      url:"https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
-    },
-    {
-      ad:"Tebrikler",
-      url:"https://media.giphy.com/media/g9582DNuQppxC/giphy.gif"
-    },
-    {
-      ad:"Kahkaha",
-      url:"https://media.giphy.com/media/l0ExayQDzrI2xOb8A/giphy.gif"
-    },
-    {
-      ad:"Dans",
-      url:"https://media.giphy.com/media/3o6Zt6D4oG5gkQqL7G/giphy.gif"
-    },
-    {
-      ad:"Alkış",
-      url:"https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif"
-    }
+    {ad:"Başparmak",url:"https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif"},
+    {ad:"Şaşkınlık",url:"https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"},
+    {ad:"Tebrikler",url:"https://media.giphy.com/media/g9582DNuQppxC/giphy.gif"},
+    {ad:"Kahkaha",url:"https://media.giphy.com/media/l0ExayQDzrI2xOb8A/giphy.gif"},
+    {ad:"Dans",url:"https://media.giphy.com/media/3o6Zt6D4oG5gkQqL7G/giphy.gif"},
+    {ad:"Alkış",url:"https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif"}
   ];
 
   function hataGoster(mesaj){
@@ -294,45 +272,33 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       const url = new URL(value);
       if(url.protocol !== "https:" && url.protocol !== "http:") return null;
       return url;
-    }catch(_){
-      return null;
-    }
+    }catch(_){return null;}
   }
 
   function videoBilgisi(adres){
     if(!adres || typeof adres !== "string") return null;
     const url = parseHttpUrl(adres.trim());
     if(!url) return null;
-
     const host = url.hostname.toLowerCase().replace(/^www\./,"");
 
-    if(host === "my.mail.ru" &&
-       /^\/video\/embed\/\d+\/?$/.test(url.pathname)){
+    if(host === "my.mail.ru" && /^\/video\/embed\/\d+\/?$/.test(url.pathname)){
       return {tur:"mailru",adres:url.href};
     }
 
     let id = "";
     if(host === "youtu.be"){
       id = url.pathname.split("/").filter(Boolean)[0] || "";
-    }else if([
-      "youtube.com","m.youtube.com","music.youtube.com",
-      "youtube-nocookie.com"
-    ].includes(host)){
+    }else if(["youtube.com","m.youtube.com","music.youtube.com","youtube-nocookie.com"].includes(host)){
       if(url.pathname === "/watch"){
         id = url.searchParams.get("v") || "";
       }else{
         const parts = url.pathname.split("/").filter(Boolean);
-        if(["embed","shorts","live"].includes(parts[0])){
-          id = parts[1] || "";
-        }
+        if(["embed","shorts","live"].includes(parts[0])) id = parts[1] || "";
       }
     }
 
     if(/^[A-Za-z0-9_-]{11}$/.test(id)){
-      return {
-        tur:"youtube",
-        adres:"https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id)
-      };
+      return {tur:"youtube",adres:"https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id)};
     }
     return null;
   }
@@ -367,19 +333,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     kart.className = "yorum-kart";
     const ust = document.createElement("div");
     ust.className = "yorum-ust";
-
     const isim = document.createElement("span");
     isim.className = "yorum-isim";
     isim.textContent = yorum.name || "İsimsiz";
-
     const tarih = document.createElement("time");
     tarih.className = "yorum-tarih";
     tarih.textContent = tarihFormatla(yorum.created_at);
-
     const metin = document.createElement("p");
     metin.className = "yorum-metni";
     metin.textContent = yorum.comment || "";
-
     ust.append(isim,tarih);
     kart.append(ust,metin);
     return kart;
@@ -387,9 +349,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 
   async function yorumlariYukle(filmId){
     yorumListesi.replaceChildren();
-
-    const {data,error} = await client
-      .from("movie_comments")
+    const {data,error} = await client.from("movie_comments")
       .select("id,movie_id,name,comment,created_at")
       .eq("movie_id",String(filmId))
       .order("created_at",{ascending:false});
@@ -419,33 +379,21 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   function chatMesajKarti(mesaj){
     const kart = document.createElement("article");
     kart.className = "chat-mesaj";
-
-    if(mesaj.nickname === chatIsim.value.trim()){
-      kart.classList.add("chat-mesaj-kendi");
-    }
+    if(mesaj.nickname === chatIsim.value.trim()) kart.classList.add("chat-mesaj-kendi");
 
     const ust = document.createElement("div");
     ust.className = "chat-mesaj-ust";
-
     const isim = document.createElement("span");
     isim.className = "chat-isim";
     isim.textContent = mesaj.nickname || "İzleyici";
-
     const saat = document.createElement("time");
     saat.className = "chat-saat";
     saat.textContent = tarihFormatla(mesaj.created_at);
-
     ust.append(isim,saat);
     kart.append(ust);
 
     if(mesaj.message_type === "gif" && mesaj.gif_url){
-      /*
-       * Yalnızca önceden tanımlanmış GIF koleksiyonundaki
-       * URL'leri göster. Veritabanından gelen keyfî URL'leri
-       * doğrudan yüklemeyerek kötüye kullanım riskini azalt.
-       */
       const izinliGif = GIF_KOLEKSIYONU.some(g => g.url === mesaj.gif_url);
-
       if(izinliGif){
         const img = document.createElement("img");
         img.className = "chat-gif";
@@ -473,19 +421,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       yazi.textContent = mesaj.message || "";
       kart.append(yazi);
     }
-
     return kart;
   }
 
   function chatMesajiEkle(mesaj){
     if(!mesaj || !mesaj.id || gorulenMesajlar.has(String(mesaj.id))) return;
-
     const bos = chatMesajlar.querySelector(".chat-bos");
     if(bos) chatMesajlar.replaceChildren();
-
     gorulenMesajlar.add(String(mesaj.id));
     chatMesajlar.append(chatMesajKarti(mesaj));
-
     while(chatMesajlar.children.length > 150){
       chatMesajlar.removeChild(chatMesajlar.firstElementChild);
     }
@@ -500,19 +444,14 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       button.className = "emoji-sec";
       button.textContent = emoji;
       button.setAttribute("aria-label",emoji + " emojisini ekle");
-
       button.addEventListener("click",()=>{
         const start = chatMetin.selectionStart ?? chatMetin.value.length;
         const end = chatMetin.selectionEnd ?? start;
-        const once = chatMetin.value.slice(0,start);
-        const sonra = chatMetin.value.slice(end);
-        const yeni = once + emoji + sonra;
-
+        const yeni = chatMetin.value.slice(0,start) + emoji + chatMetin.value.slice(end);
         if(yeni.length > 500){
           chatBilgiGoster("Mesaj en fazla 500 karakter olabilir.",true);
           return;
         }
-
         chatMetin.value = yeni;
         const pos = start + emoji.length;
         chatMetin.focus();
@@ -520,36 +459,30 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
         chatKarakterSayi.textContent = String(yeni.length);
         seciliGif = null;
       });
-
       grid.append(button);
     });
   }
 
   function gifPaneliniHazirla(){
     const grid = $("gif-grid");
-
     GIF_KOLEKSIYONU.forEach(gif=>{
       const button = document.createElement("button");
       button.type = "button";
       button.className = "gif-sec";
       button.setAttribute("aria-label",gif.ad + " GIF'ini gönder");
-
       const img = document.createElement("img");
       img.src = gif.url;
       img.alt = gif.ad;
       img.loading = "lazy";
       img.referrerPolicy = "no-referrer";
-
+      const label = document.createElement("span");
+      label.textContent = gif.ad;
       img.onerror = ()=>{
         button.disabled = true;
         img.alt = "GIF yüklenemedi";
         img.style.display = "none";
         label.textContent = gif.ad + " — yüklenemedi";
       };
-
-      const label = document.createElement("span");
-      label.textContent = gif.ad;
-
       button.append(img,label);
       button.addEventListener("click",()=>{
         seciliGif = gif;
@@ -560,7 +493,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
         chatBilgiGoster("Seçilen GIF: " + gif.ad + ". Göndermek için «Mesajı gönder» düğmesine bas.");
         chatMetin.focus();
       });
-
       grid.append(button);
     });
   }
@@ -592,8 +524,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     chatDurumAyarla("Mesajlar yükleniyor...");
     chatBosMesaji("Sohbet mesajları yükleniyor...");
 
-    const {data,error} = await client
-      .from("movie_chat_messages")
+    const {data,error} = await client.from("movie_chat_messages")
       .select("id,movie_id,nickname,message,message_type,gif_url,created_at")
       .eq("movie_id",aktifFilmId)
       .order("created_at",{ascending:true})
@@ -609,7 +540,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 
     chatMesajlar.replaceChildren();
     gorulenMesajlar.clear();
-
     if(!data || data.length === 0){
       chatBosMesaji("Henüz mesaj yok. Sohbeti başlatan ilk kişi sen ol!");
     }else{
@@ -621,8 +551,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       chatKanali = null;
     }
 
-    chatKanali = client
-      .channel("film-chat-" + aktifFilmId)
+    chatKanali = client.channel("film-chat-" + aktifFilmId)
       .on("postgres_changes",{
         event:"INSERT",
         schema:"public",
@@ -663,7 +592,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 
   chatForm.addEventListener("submit",async event=>{
     event.preventDefault();
-
     const nickname = chatIsim.value.trim();
     const message = chatMetin.value.trim();
 
@@ -671,13 +599,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       chatBilgiGoster("Film bilgisi henüz hazır değil.",true);
       return;
     }
-
     if(!nickname || nickname.length > 30){
       chatBilgiGoster("Lütfen 1–30 karakter arasında bir takma ad yaz.",true);
       chatIsim.focus();
       return;
     }
-
     if(!seciliGif && (!message || message.length > 500)){
       chatBilgiGoster("Mesajın 1–500 karakter arasında olmalı.",true);
       chatMetin.focus();
@@ -696,30 +622,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     chatBilgiGoster("");
 
     try{
-      try{
-        localStorage.setItem("bengusflix_chat_nickname",nickname);
-      }catch(_){}
+      try{localStorage.setItem("bengusflix_chat_nickname",nickname);}catch(_){}
 
       const kayit = seciliGif
-        ? {
-            movie_id:aktifFilmId,
-            nickname,
-            message:"GIF gönderdi",
-            message_type:"gif",
-            gif_url:seciliGif.url
-          }
-        : {
-            movie_id:aktifFilmId,
-            nickname,
-            message,
-            message_type:"text",
-            gif_url:null
-          };
+        ? {movie_id:aktifFilmId,nickname,message:"GIF gönderdi",message_type:"gif",gif_url:seciliGif.url}
+        : {movie_id:aktifFilmId,nickname,message,message_type:"text",gif_url:null};
 
-      const {error} = await client
-        .from("movie_chat_messages")
-        .insert(kayit);
-
+      const {error} = await client.from("movie_chat_messages").insert(kayit);
       if(error) throw error;
 
       chatMetin.value = "";
@@ -729,10 +638,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       chatMetin.focus();
     }catch(error){
       console.error("Sohbet mesajı gönderme hatası:",error);
-      chatBilgiGoster(
-        "Mesaj gönderilemedi. Supabase tablo izinlerini ve GIF alanlarını kontrol et.",
-        true
-      );
+      chatBilgiGoster("Mesaj gönderilemedi. Supabase tablo izinlerini ve GIF alanlarını kontrol et.",true);
       sonGonderim = 0;
     }finally{
       chatGonder.disabled = false;
@@ -749,21 +655,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     const params = new URLSearchParams(location.search);
     const filmId = params.get("id");
 
-    if(!filmId){
-      throw new Error("Film numarası bulunamadı. Film arşivine dön.");
-    }
+    if(!filmId) throw new Error("Film numarası bulunamadı. Film arşivine dön.");
 
     if(!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_PUBLISHABLE_KEY){
       throw new Error("Supabase ayarları yüklenemedi. supabase-config.js dosyasını kontrol et.");
     }
 
-    client = window.supabase.createClient(
-      window.SUPABASE_URL,
-      window.SUPABASE_PUBLISHABLE_KEY
-    );
+    client = window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY);
 
-    const {data:film,error} = await client
-      .from("movies")
+    const {data:film,error} = await client.from("movies")
       .select("id,title,youtube,genre,year,rating,poster,description")
       .eq("id",filmId)
       .maybeSingle();
@@ -815,6 +715,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     icerik.hidden = false;
     document.title = (film.title || "Film İzle") + " | BengüşFlix";
 
+    /* CANLI İZLEYİCİ KAYDI */
+    if(window.BengusPresence){
+      window.BengusPresence.start(film.id,film.title || "Film");
+    }else{
+      console.warn("Canlı izleyici sistemi yüklenemedi. presence.js ve Supabase ayarlarını kontrol et.");
+    }
+
     await Promise.all([
       yorumlariYukle(film.id),
       chatBaslat(film.id,film.title || "Film")
@@ -822,7 +729,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 
     yorumForm.addEventListener("submit",async event=>{
       event.preventDefault();
-
       const name = yorumIsim.value.trim();
       const comment = yorumMetni.value.trim();
 
@@ -830,7 +736,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
         mesajGoster("Lütfen isim ve yorum alanlarını doldur.",true);
         return;
       }
-
       if(name.length > 60 || comment.length > 1000){
         mesajGoster("İsim en fazla 60, yorum en fazla 1000 karakter olabilir.",true);
         return;
@@ -841,21 +746,14 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       mesajGoster("");
 
       try{
-        const {data,error} = await client
-          .from("movie_comments")
-          .insert({
-            movie_id:String(film.id),
-            name,
-            comment
-          })
+        const {data,error} = await client.from("movie_comments")
+          .insert({movie_id:String(film.id),name,comment})
           .select("id,movie_id,name,comment,created_at")
           .single();
 
         if(error) throw error;
-
         const empty = yorumListesi.querySelector(".durum");
         if(empty) yorumListesi.replaceChildren();
-
         yorumListesi.prepend(yorumKarti(data));
         yorumMetni.value = "";
         mesajGoster("Yorumun yayınlandı!");
@@ -876,4 +774,3 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 </script>
 </body>
 </html>
-```
