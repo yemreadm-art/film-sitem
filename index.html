@@ -1,312 +1,408 @@
-```html
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Flix | Film Arşivi</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --red: #e50914;
-      --bg: #101014;
-      --panel: #1b1b22;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101014">
+<title>Film Arşivim</title>
 
-    * { box-sizing: border-box; }
+<style>
+:root {
+  --arka: #101014;
+  --kart: #1b1b23;
+  --kirmizi: #e74752;
+  --yazi: #f6f6f8;
+  --soluk: #aaaab6;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--arka);
+  color: var(--yazi);
+  font-family: Arial, Helvetica, sans-serif;
+}
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
+.ust-menu {
+  background: #17171d;
+  border-bottom: 1px solid #292932;
+}
+.menu-icerik {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.logo { font-size: 26px; font-weight: 900; }
+.logo span { color: var(--kirmizi); }
+.menu-baglantilari {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 22px;
+  color: #ddd;
+  font-size: 14px;
+}
+.menu-baglantilari a:hover { color: var(--kirmizi); }
 
-    header {
-      background: #17171d;
-      padding: 20px 6%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #292930;
-    }
+.karsilama {
+  padding: 75px 20px;
+  background:
+    radial-gradient(ellipse at 80% 20%, #48222b 0, transparent 45%),
+    linear-gradient(120deg, #191920, #101014);
+}
+.karsilama-icerik { max-width: 1160px; margin: auto; }
+.kucuk-baslik {
+  color: var(--kirmizi);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.karsilama h1 {
+  max-width: 700px;
+  font-size: clamp(36px, 6vw, 64px);
+  line-height: 1.08;
+  margin: 18px 0;
+}
+.karsilama h1 span { color: var(--kirmizi); }
+.karsilama p {
+  color: #c1c1cb;
+  max-width: 570px;
+  line-height: 1.8;
+}
+.dugme {
+  display: inline-block;
+  margin-top: 16px;
+  background: var(--kirmizi);
+  color: white;
+  padding: 13px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.dugme:hover { background: #c93642; }
 
-    .logo {
-      font-size: 30px;
-      font-weight: 900;
-      color: white;
-      text-decoration: none;
-    }
+.ana-icerik {
+  max-width: 1200px;
+  padding: 38px 20px 60px;
+  margin: auto;
+}
+.bolum-basligi {
+  font-size: 24px;
+  margin: 0 0 10px;
+}
+.bolum-aciklama {
+  color: var(--soluk);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
+.arama-alani { margin-bottom: 25px; }
+.arama {
+  width: 100%;
+  max-width: 440px;
+  padding: 13px 15px;
+  color: white;
+  background: #1b1b23;
+  border: 1px solid #373741;
+  border-radius: 7px;
+  outline: none;
+}
+.arama:focus { border-color: var(--kirmizi); }
 
-    .logo span { color: var(--red); }
-    .admin { color: #ddd; text-decoration: none; }
+.film-listesi {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 22px;
+}
+.film-karti {
+  display: block;
+  overflow: hidden;
+  background: var(--kart);
+  border: 1px solid #292932;
+  border-radius: 10px;
+  transition: transform .2s, border-color .2s;
+}
+.film-karti:hover {
+  transform: translateY(-4px);
+  border-color: #555563;
+}
+.film-afis {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+  background: #282832;
+}
+.afis-yok {
+  aspect-ratio: 2 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: linear-gradient(145deg, #343440, #17171d);
+  color: #dedee7;
+  font-size: 20px;
+  font-weight: bold;
+}
+.film-bilgileri { padding: 15px; }
+.film-adi { font-size: 17px; margin: 0 0 10px; }
+.film-detay { color: var(--soluk); font-size: 12px; line-height: 1.7; }
+.film-aciklama {
+  color: #d1d1da;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.film-baglantisi {
+  display: inline-block;
+  color: #ff737c;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+.durum {
+  color: var(--soluk);
+  padding: 18px 0;
+  line-height: 1.7;
+}
+.alt-bilgi {
+  border-top: 1px solid #292932;
+  padding: 28px 20px;
+  color: var(--soluk);
+  text-align: center;
+  font-size: 13px;
+}
+.gizli { display: none !important; }
 
-    main {
-      max-width: 1250px;
-      margin: auto;
-      padding: 35px 20px;
-    }
-
-    .heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 25px;
-    }
-
-    h1 { margin: 0; font-size: 28px; }
-
-    input {
-      background: #202027;
-      border: 1px solid #383842;
-      border-radius: 8px;
-      padding: 13px 15px;
-      color: white;
-      width: min(100%, 320px);
-      font-size: 15px;
-    }
-
-    #status { color: #bbb; margin: 18px 0; }
-
-    .movies {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 22px;
-    }
-
-    .movie {
-      cursor: pointer;
-      overflow: hidden;
-      border-radius: 10px;
-      background: var(--panel);
-      transition: transform .2s, border-color .2s;
-      border: 1px solid #292930;
-    }
-
-    .movie:hover {
-      transform: translateY(-5px);
-      border-color: var(--red);
-    }
-
-    .poster, .no-poster {
-      width: 100%;
-      height: 270px;
-      object-fit: cover;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #292930;
-      color: #aaa;
-    }
-
-    .info { padding: 14px; }
-
-    .title {
-      font-size: 17px;
-      font-weight: 700;
-      margin: 0 0 9px;
-      overflow-wrap: anywhere;
-    }
-
-    .meta {
-      color: #bbb;
-      font-size: 13px;
-      margin-bottom: 12px;
-    }
-
-    .play {
-      display: block;
-      text-align: center;
-      background: var(--red);
-      color: white;
-      text-decoration: none;
-      padding: 10px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-
-    .play:hover { background: #bd0811; }
-
-    footer {
-      text-align: center;
-      padding: 25px;
-      color: #777;
-      border-top: 1px solid #292930;
-      margin-top: 35px;
-    }
-
-    @media (max-width: 500px) {
-      .movies {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-      }
-
-      .poster, .no-poster { height: 220px; }
-      h1 { font-size: 23px; }
-    }
-  </style>
+@media (max-width: 600px) {
+  .menu-icerik { align-items: flex-start; flex-direction: column; }
+  .menu-baglantilari { gap: 16px; }
+  .karsilama { padding: 55px 20px; }
+  .film-listesi {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .film-bilgileri { padding: 11px; }
+  .film-adi { font-size: 15px; }
+}
+</style>
 </head>
+
 <body>
-  <header>
-    <a class="logo" href="./index.html">Fl<span>i</span>x</a>
-    <a class="admin" href="./admin.html">Yönetim Paneli</a>
-  </header>
 
-  <main>
-    <div class="heading">
-      <h1>Film Arşivi</h1>
-      <input id="search" type="search" placeholder="Film ara...">
-    </div>
+<header class="ust-menu">
+  <div class="menu-icerik">
+    <a class="logo" href="#anasayfa">FİLM<span>ARŞİVİ</span></a>
+    <nav class="menu-baglantilari">
+      <a href="#anasayfa">Ana Sayfa</a>
+      <a href="#filmler">Filmler</a>
+      <a href="#hakkinda">Hakkında</a>
+      <a href="./admin.html">Yönetim Paneli</a>
+    </nav>
+  </div>
+</header>
 
-    <p id="status">Filmler yükleniyor...</p>
-    <div id="movies" class="movies"></div>
-  </main>
+<section class="karsilama" id="anasayfa">
+  <div class="karsilama-icerik">
+    <div class="kucuk-baslik">Kişisel film koleksiyonun</div>
+    <h1>İzlenecek yeni bir <span>hikâye</span> keşfet.</h1>
+    <p>
+      Film arşivini tek bir yerde topla. Eklediğin filmleri görüntüle,
+      ara ve film bilgilerine kolayca ulaş.
+    </p>
+    <a class="dugme" href="#filmler">Filmleri Gör</a>
+  </div>
+</section>
 
-  <footer>Flix Film Arşivi</footer>
+<main class="ana-icerik" id="filmler">
+  <h2 class="bolum-basligi">Film Koleksiyonu</h2>
+  <p class="bolum-aciklama">
+    Yönetim panelinden eklediğin filmler burada gösterilir.
+    Bir filme tıklayarak kendi film izleme sayfanda açabilirsin.
+  </p>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./supabase-config.js"></script>
+  <div class="arama-alani">
+    <input
+      class="arama"
+      id="film-arama"
+      type="search"
+      placeholder="Film adına göre ara..."
+      aria-label="Film adına göre ara"
+    >
+  </div>
 
-  <script>
-    const movieList = document.getElementById("movies");
-    const status = document.getElementById("status");
-    const search = document.getElementById("search");
+  <p class="durum" id="film-durumu">
+    Veritabanına bağlanılıyor...
+  </p>
 
-    let db;
-    let allMovies = [];
+  <div class="film-listesi" id="veritabani-filmleri"></div>
+</main>
 
-    function escapeHTML(value) {
-      return String(value ?? "").replace(/[&<>"']/g, ch => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-      }[ch]));
+<section class="ana-icerik" id="hakkinda">
+  <h2 class="bolum-basligi">Hakkında</h2>
+  <p class="bolum-aciklama">
+    Bu site kişisel film arşividir. Yeni film eklemek ve kayıtları
+    yönetmek için yönetim panelini kullanabilirsin.
+  </p>
+  <a class="dugme" href="./admin.html">Yönetim Panelini Aç</a>
+</section>
+
+<footer class="alt-bilgi">
+  © 2026 Film Arşivim · Kişisel film koleksiyonun
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
+
+<script>
+(async function () {
+  const durum = document.getElementById("film-durumu");
+  const liste = document.getElementById("veritabani-filmleri");
+  const arama = document.getElementById("film-arama");
+
+  function eleman(etiket, sinif, metin) {
+    const e = document.createElement(etiket);
+    if (sinif) e.className = sinif;
+    if (metin !== undefined) e.textContent = metin;
+    return e;
+  }
+
+  function filmKarti(film) {
+    // Kart artık YouTube'a değil, sitemizdeki izleme sayfasına gider.
+    const kart = eleman("a", "film-karti");
+    kart.href = "./watch.html?id=" + encodeURIComponent(film.id);
+    kart.dataset.filmAdi =
+      (film.title || "").toLocaleLowerCase("tr-TR");
+    kart.setAttribute(
+      "aria-label",
+      (film.title || "Film") + " filmini izle"
+    );
+
+    if (film.poster) {
+      const afis = eleman("img", "film-afis");
+      afis.src = film.poster;
+      afis.alt = (film.title || "Film") + " afişi";
+      afis.loading = "lazy";
+
+      afis.onerror = function () {
+        const yedek = eleman(
+          "div",
+          "afis-yok",
+          film.title || "Film"
+        );
+        afis.replaceWith(yedek);
+      };
+
+      kart.appendChild(afis);
+    } else {
+      kart.appendChild(
+        eleman("div", "afis-yok", film.title || "Film")
+      );
     }
 
-    function renderMovies() {
-      const term = search.value.trim().toLocaleLowerCase("tr-TR");
+    const bilgiler = eleman("div", "film-bilgileri");
 
-      const filtered = allMovies.filter(movie =>
-        String(movie.title || "").toLocaleLowerCase("tr-TR").includes(term) ||
-        String(movie.genre || "").toLocaleLowerCase("tr-TR").includes(term) ||
-        String(movie.year || "").includes(term)
+    bilgiler.appendChild(
+      eleman("h3", "film-adi", film.title || "İsimsiz film")
+    );
+
+    const detaylar = [];
+
+    if (film.year) detaylar.push(String(film.year));
+    if (film.genre) detaylar.push(film.genre);
+
+    if (
+      film.rating !== null &&
+      film.rating !== undefined &&
+      film.rating !== ""
+    ) {
+      detaylar.push("★ " + film.rating);
+    }
+
+    if (detaylar.length) {
+      bilgiler.appendChild(
+        eleman("div", "film-detay", detaylar.join(" · "))
       );
+    }
 
-      movieList.innerHTML = "";
+    if (film.description) {
+      bilgiler.appendChild(
+        eleman("p", "film-aciklama", film.description)
+      );
+    }
 
-      if (!filtered.length) {
-        status.textContent = allMovies.length
-          ? "Aramana uygun film bulunamadı."
-          : "Henüz film eklenmemiş. Yönetim panelinden film ekleyebilirsin.";
-        return;
-      }
+    bilgiler.appendChild(
+      eleman("span", "film-baglantisi", "Filmi İzle →")
+    );
 
-      status.textContent = filtered.length + " film";
+    kart.appendChild(bilgiler);
+    return kart;
+  }
 
-      filtered.forEach(movie => {
-        const card = document.createElement("article");
-        card.className = "movie";
-        card.tabIndex = 0;
-        card.setAttribute("role", "link");
-        card.setAttribute("aria-label", movie.title + " filmini izle");
+  try {
+    if (
+      !window.supabase ||
+      !window.SUPABASE_URL ||
+      !window.SUPABASE_PUBLISHABLE_KEY
+    ) {
+      throw new Error(
+        "Supabase ayarları bulunamadı. supabase-config.js dosyasını kontrol et."
+      );
+    }
 
-        const posterHTML = movie.poster
-          ? `<img class="poster" src="${escapeHTML(movie.poster)}" alt="${escapeHTML(movie.title)} afişi" loading="lazy">`
-          : `<div class="no-poster">Afiş eklenmemiş</div>`;
+    // Mevcut Supabase yapılandırması korunmuştur.
+    const istemci = window.supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_PUBLISHABLE_KEY
+    );
 
-        card.innerHTML = `
-          ${posterHTML}
-          <div class="info">
-            <p class="title">${escapeHTML(movie.title)}</p>
-            <div class="meta">
-              ${escapeHTML(movie.year || "")}
-              ${movie.genre ? " · " + escapeHTML(movie.genre) : ""}
-              ${movie.rating ? " · ★ " + escapeHTML(movie.rating) : ""}
-            </div>
-            <a class="play" href="./watch.html?id=${encodeURIComponent(movie.id)}">▶ Filmi İzle</a>
-          </div>
-        `;
+    const sonuc = await istemci
+      .from("movies")
+      .select(
+        "id,title,youtube,genre,year,rating,poster,description,created_at"
+      )
+      .order("created_at", { ascending: false });
 
-        const openMovie = () => {
-          window.location.href =
-            "./watch.html?id=" + encodeURIComponent(movie.id);
-        };
+    if (sonuc.error) throw sonuc.error;
 
-        card.addEventListener("click", event => {
-          if (event.target.closest("a")) return;
-          openMovie();
-        });
+    liste.replaceChildren();
 
-        card.addEventListener("keydown", event => {
-          if (event.key === "Enter" || event.key === " ") {
-            if (event.target.closest("a")) return;
-            event.preventDefault();
-            openMovie();
-          }
-        });
+    if (!sonuc.data || sonuc.data.length === 0) {
+      durum.textContent = "Henüz kayıtlı film yok.";
+    } else {
+      durum.textContent =
+        sonuc.data.length + " film başarıyla yüklendi.";
 
-        const poster = card.querySelector("img.poster");
-        if (poster) {
-          poster.addEventListener("error", () => {
-            const replacement = document.createElement("div");
-            replacement.className = "no-poster";
-            replacement.textContent = "Afiş bulunamadı";
-            poster.replaceWith(replacement);
-          });
-        }
-
-        movieList.appendChild(card);
+      sonuc.data.forEach(function (film) {
+        liste.appendChild(filmKarti(film));
       });
     }
+  } catch (hata) {
+    console.error("Film yükleme hatası:", hata);
+    durum.textContent =
+      "Filmler yüklenemedi: " + hata.message;
+  }
 
-    async function loadMovies() {
-      try {
-        if (!window.supabase) {
-          throw new Error("Supabase kütüphanesi yüklenemedi.");
-        }
+  arama.addEventListener("input", function () {
+    const kelime = arama.value
+      .trim()
+      .toLocaleLowerCase("tr-TR");
 
-        const supabaseUrl = window.SUPABASE_URL;
-        const supabaseKey = window.SUPABASE_PUBLISHABLE_KEY;
+    liste.querySelectorAll(".film-karti").forEach(function (kart) {
+      const ad = kart.dataset.filmAdi || "";
+      kart.classList.toggle("gizli", !ad.includes(kelime));
+    });
+  });
+})();
+</script>
 
-        if (!supabaseUrl || !supabaseKey) {
-          throw new Error(
-            "supabase-config.js yüklenemedi veya bağlantı bilgileri eksik."
-          );
-        }
-
-        db = window.supabase.createClient(supabaseUrl, supabaseKey, {
-          global: {
-            headers: {
-              apikey: supabaseKey
-            }
-          }
-        });
-
-        const { data, error } = await db
-          .from("movies")
-          .select("id,title,youtube,genre,year,rating,poster,description,featured,created_at")
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-
-        allMovies = data || [];
-        renderMovies();
-
-      } catch (error) {
-        console.error("Film yükleme hatası:", error);
-        status.textContent = "Filmler yüklenemedi: " + error.message;
-      }
-    }
-
-    search.addEventListener("input", renderMovies);
-    loadMovies();
-  </script>
 </body>
 </html>
-```
