@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101014">
-<title>Film Arşivim</title>
+<title>BengüşFlix</title>
 
 <style>
 :root {
@@ -200,7 +200,7 @@ button, input { font: inherit; }
 
 <header class="ust-menu">
   <div class="menu-icerik">
-    <a class="logo" href="#anasayfa">FİLM<span>ARŞİVİ</span></a>
+    <a class="logo" href="#anasayfa">Bengüş<span>Flix</span></a>
     <nav class="menu-baglantilari">
       <a href="#anasayfa">Ana Sayfa</a>
       <a href="#filmler">Filmler</a>
@@ -256,7 +256,7 @@ button, input { font: inherit; }
 </section>
 
 <footer class="alt-bilgi">
-  © 2026 Film Arşivim · Kişisel film koleksiyonun
+  © 2026 BengüşFlix · Kişisel film koleksiyonun
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -276,7 +276,6 @@ button, input { font: inherit; }
   }
 
   function filmKarti(film) {
-    // Kart artık YouTube'a değil, sitemizdeki izleme sayfasına gider.
     const kart = eleman("a", "film-karti");
     kart.href = "./watch.html?id=" + encodeURIComponent(film.id);
     kart.dataset.filmAdi =
@@ -291,16 +290,11 @@ button, input { font: inherit; }
       afis.src = film.poster;
       afis.alt = (film.title || "Film") + " afişi";
       afis.loading = "lazy";
-
       afis.onerror = function () {
-        const yedek = eleman(
-          "div",
-          "afis-yok",
-          film.title || "Film"
+        afis.replaceWith(
+          eleman("div", "afis-yok", film.title || "Film")
         );
-        afis.replaceWith(yedek);
       };
-
       kart.appendChild(afis);
     } else {
       kart.appendChild(
@@ -309,13 +303,11 @@ button, input { font: inherit; }
     }
 
     const bilgiler = eleman("div", "film-bilgileri");
-
     bilgiler.appendChild(
       eleman("h3", "film-adi", film.title || "İsimsiz film")
     );
 
     const detaylar = [];
-
     if (film.year) detaylar.push(String(film.year));
     if (film.genre) detaylar.push(film.genre);
 
@@ -358,7 +350,6 @@ button, input { font: inherit; }
       );
     }
 
-    // Mevcut Supabase yapılandırması korunmuştur.
     const istemci = window.supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_PUBLISHABLE_KEY
