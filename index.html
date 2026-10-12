@@ -26,6 +26,8 @@ a { color: inherit; text-decoration: none; }
 button, input { font: inherit; }
 
 .ust-menu {
+  position: relative;
+  z-index: 20;
   background: #17171d;
   border-bottom: 1px solid #292932;
 }
@@ -123,59 +125,140 @@ button, input { font: inherit; }
 }
 .film-ana-alan { min-width: 0; }
 
+/* FİLM KARTLARI */
 .film-listesi {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 22px;
+  gap: 28px 18px;
+  align-items: start;
 }
+
 .film-karti {
   display: block;
+  position: relative;
   min-width: 0;
-  overflow: hidden;
-  background: var(--kart);
-  border: 1px solid #292932;
   border-radius: 10px;
-  transition: transform .2s, border-color .2s;
+  z-index: 1;
+  outline: none;
+  transition: transform .28s ease;
 }
-.film-karti:hover {
-  transform: translateY(-4px);
-  border-color: #555563;
+
+.film-karti:hover,
+.film-karti:focus-within,
+.film-karti.acik {
+  z-index: 10;
+  transform: scale(1.045);
 }
-.film-afis {
+
+.film-afis,
+.afis-yok {
   width: 100%;
   aspect-ratio: 2 / 3;
-  object-fit: cover;
   display: block;
+  object-fit: cover;
+  border-radius: 10px;
   background: #282832;
+  transition: filter .25s ease, border-radius .25s ease;
 }
+
 .afis-yok {
-  aspect-ratio: 2 / 3;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
   text-align: center;
-  background: linear-gradient(145deg, #343440, #17171d);
   color: #dedee7;
   font-size: 20px;
   font-weight: bold;
+  background: linear-gradient(145deg, #343440, #17171d);
 }
-.film-bilgileri { padding: 15px; }
-.film-adi { font-size: 17px; margin: 0 0 10px; }
-.film-detay { color: var(--soluk); font-size: 12px; line-height: 1.7; }
-.film-aciklama {
-  color: #d1d1da;
-  font-size: 13px;
+
+.film-karti:hover .film-afis,
+.film-karti:focus-within .film-afis,
+.film-karti.acik .film-afis {
+  filter: brightness(.42);
+}
+
+.film-bilgileri {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 7px;
+  padding: 14px;
+  border-radius: 10px;
+  background: linear-gradient(
+    to bottom,
+    rgba(16,16,20,.04) 0%,
+    rgba(16,16,20,.15) 25%,
+    rgba(16,16,20,.93) 72%,
+    #101014 100%
+  );
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(7px);
+  transition:
+    opacity .23s ease,
+    transform .23s ease,
+    visibility .23s ease;
+}
+
+.film-karti:hover .film-bilgileri,
+.film-karti:focus-within .film-bilgileri,
+.film-karti.acik .film-bilgileri {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.film-adi {
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.film-detay {
+  color: #dedee7;
+  font-size: 11px;
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
-.film-baglantisi {
-  display: inline-block;
-  color: #ff737c;
-  font-size: 13px;
-  font-weight: bold;
-  margin-top: 8px;
+
+.film-aciklama {
+  color: #eeeeF4;
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
+
+.film-baglantisi {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 10px 13px;
+  margin-top: 4px;
+  border-radius: 5px;
+  background: var(--kirmizi);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background .2s ease;
+}
+
+.film-baglantisi:hover { background: #c93642; }
+
 .durum {
   color: var(--soluk);
   padding: 18px 0;
@@ -212,9 +295,7 @@ button, input { font: inherit; }
   margin: 0;
   padding: 10px 16px 0;
 }
-.yan-kart-icerik {
-  padding: 6px 15px 12px;
-}
+.yan-kart-icerik { padding: 6px 15px 12px; }
 .yan-bos {
   color: var(--soluk);
   font-size: 13px;
@@ -414,6 +495,7 @@ button, input { font: inherit; }
     align-items: start;
   }
 }
+
 @media (max-width: 600px) {
   .menu-icerik { align-items: flex-start; flex-direction: column; }
   .menu-baglantilari { gap: 16px; }
@@ -424,14 +506,28 @@ button, input { font: inherit; }
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
-  .film-bilgileri { padding: 11px; }
-  .film-adi { font-size: 15px; }
-  .film-aciklama { font-size: 12px; }
+  .film-adi { font-size: 13px; }
+  .film-detay { font-size: 10px; }
+  .film-aciklama {
+    font-size: 11px;
+    -webkit-line-clamp: 4;
+  }
+  .film-bilgileri { padding: 10px; gap: 5px; }
+  .film-baglantisi { padding: 8px 10px; font-size: 11px; }
   .sag-panel { grid-template-columns: minmax(0, 1fr); }
   .canli-bolum { padding: 25px 14px 30px; }
   .canli-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .canli-film-karti { padding: 12px; }
   .canli-film-adi { font-size: 15px; }
+}
+
+/* Hareket hassasiyeti olan kullanicilar */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
 }
 </style>
 </head>
@@ -479,8 +575,7 @@ button, input { font: inherit; }
     <section class="film-ana-alan" aria-labelledby="film-koleksiyon-baslik">
       <h2 class="bolum-basligi" id="film-koleksiyon-baslik">Film Koleksiyonu</h2>
       <p class="bolum-aciklama">
-        Yönetim panelinden eklediğin filmler burada gösterilir.
-        Bir filme tıklayarak kendi film izleme sayfanda açabilirsin.
+        Filmlerin üzerine gelerek bilgilerini görebilir, oynat butonuyla izleme sayfasını açabilirsin.
       </p>
 
       <div class="arama-alani">
@@ -551,10 +646,8 @@ button, input { font: inherit; }
   }
 
   function filmKarti(film) {
-    const kart = eleman("a", "film-karti");
-    kart.href = "./watch.html?id=" + encodeURIComponent(film.id);
+    const kart = eleman("article", "film-karti");
     kart.dataset.filmAdi = (film.title || "").toLocaleLowerCase("tr-TR");
-    kart.setAttribute("aria-label", (film.title || "Film") + " filmini izle");
 
     if (film.poster) {
       const afis = eleman("img", "film-afis");
@@ -570,25 +663,50 @@ button, input { font: inherit; }
     }
 
     const bilgiler = eleman("div", "film-bilgileri");
-    bilgiler.appendChild(eleman("h3", "film-adi", film.title || "İsimsiz film"));
+    bilgiler.appendChild(
+      eleman("h3", "film-adi", film.title || "İsimsiz film")
+    );
 
     const detaylar = [];
     if (film.year) detaylar.push(String(film.year));
     if (film.genre) detaylar.push(film.genre);
+
     if (film.rating !== null && film.rating !== undefined && film.rating !== "") {
       detaylar.push("★ " + film.rating);
     }
 
     if (detaylar.length) {
-      bilgiler.appendChild(eleman("div", "film-detay", detaylar.join(" · ")));
+      bilgiler.appendChild(
+        eleman("div", "film-detay", detaylar.join(" · "))
+      );
     }
 
     if (film.description) {
-      bilgiler.appendChild(eleman("p", "film-aciklama", film.description));
+      bilgiler.appendChild(
+        eleman("p", "film-aciklama", film.description)
+      );
     }
 
-    bilgiler.appendChild(eleman("span", "film-baglantisi", "Filmi İzle →"));
+    const izle = eleman("a", "film-baglantisi", "▶ Filmi İzle");
+    izle.href = "./watch.html?id=" + encodeURIComponent(film.id);
+    izle.setAttribute("aria-label", (film.title || "Film") + " filmini izle");
+    bilgiler.appendChild(izle);
     kart.appendChild(bilgiler);
+
+    // Dokunmatik ekranlarda ilk dokunuş bilgi penceresini açar.
+    kart.addEventListener("click", function (event) {
+      if (!window.matchMedia("(hover: none)").matches) return;
+      if (event.target.closest(".film-baglantisi")) return;
+
+      const aciliyor = !kart.classList.contains("acik");
+
+      liste.querySelectorAll(".film-karti.acik").forEach(function (diger) {
+        diger.classList.remove("acik");
+      });
+
+      if (aciliyor) kart.classList.add("acik");
+    });
+
     return kart;
   }
 
@@ -653,10 +771,6 @@ button, input { font: inherit; }
   async function izlenmeleriYukle(istemci, filmHaritasi) {
     bosMesaj(enCokIzlenenler, "İzlenme bilgileri yükleniyor...");
 
-    /*
-      movie_view_counts, movie_views tablosundaki her film için
-      toplam izlenme sayısını veren Supabase görünümüdür.
-    */
     const { data, error } = await istemci
       .from("movie_view_counts")
       .select("movie_id,view_count")
@@ -667,7 +781,7 @@ button, input { font: inherit; }
       console.error("İzlenme sayıları yüklenemedi:", error);
       bosMesaj(
         enCokIzlenenler,
-        "İzlenme listesi henüz hazır değil. movie_views tablosunu ve movie_view_counts görünümünü oluştur."
+        "İzlenme listesi yüklenemedi. movie_view_counts görünümünü ve erişim izinlerini kontrol et."
       );
       return;
     }
@@ -698,8 +812,10 @@ button, input { font: inherit; }
       const link = eleman("a", "izlenen-film-adi", kayit.film.title || "İsimsiz film");
       link.href = "./watch.html?id=" + encodeURIComponent(kayit.id);
 
-      const sayi = kayit.sayi.toLocaleString("tr-TR") + " izlenme";
-      bilgi.append(link, eleman("span", "izlenme-sayi", sayi));
+      bilgi.append(
+        link,
+        eleman("span", "izlenme-sayi", kayit.sayi.toLocaleString("tr-TR") + " izlenme")
+      );
       satir.append(sira, bilgi);
       frag.appendChild(satir);
     });
@@ -743,9 +859,11 @@ button, input { font: inherit; }
     } else {
       durum.textContent = filmler.length + " film başarıyla yüklendi.";
       const frag = document.createDocumentFragment();
+
       filmler.forEach(function (film) {
         frag.appendChild(filmKarti(film));
       });
+
       liste.appendChild(frag);
     }
 
