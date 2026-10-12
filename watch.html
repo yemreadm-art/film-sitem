@@ -25,6 +25,37 @@ a{color:inherit;text-decoration:none}
 .video-kapsayici iframe{display:block;width:100%;height:100%;border:0}
 .aciklama{margin-top:25px;color:#d1d1da;line-height:1.8;overflow-wrap:anywhere;white-space:pre-wrap}
 .afis{width:150px;max-width:40%;border-radius:8px;margin-top:25px}
+
+/* Canlı sohbet */
+.chat-bolumu{margin-top:35px;padding-top:28px;border-top:1px solid #292932}
+.chat-baslik{font-size:25px;margin:0 0 8px}
+.chat-alt{color:var(--soluk);font-size:14px;line-height:1.6;margin:0 0 18px}
+.chat-panel{background:var(--kart);border:1px solid #30303a;border-radius:12px;overflow:hidden}
+.chat-ust{padding:14px 16px;background:#17171d;border-bottom:1px solid #30303a;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.chat-oda{font-size:14px;font-weight:bold}
+.chat-durum{font-size:12px;color:var(--soluk)}
+.chat-nokta{display:inline-block;width:8px;height:8px;border-radius:50%;background:#777;margin-right:6px}
+.chat-nokta.canli{background:#4ade80}
+.chat-mesajlar{height:350px;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:12px}
+.chat-bos{color:var(--soluk);font-size:14px;line-height:1.7;margin:auto 0;text-align:center}
+.chat-mesaj{max-width:90%;align-self:flex-start;background:#24242e;border:1px solid #343440;border-radius:10px;padding:10px 12px;overflow-wrap:anywhere}
+.chat-mesaj-kendi{align-self:flex-end;background:#382127;border-color:#613039}
+.chat-mesaj-ust{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.chat-isim{font-size:13px;font-weight:bold;color:#ff8991}
+.chat-mesaj-kendi .chat-isim{color:#ffc0c5}
+.chat-saat{font-size:11px;color:var(--soluk)}
+.chat-mesaj-yazi{margin:0;color:#f0f0f5;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.chat-form{padding:14px;border-top:1px solid #30303a}
+.chat-alan{display:block;width:100%;padding:12px 13px;color:var(--yazi);background:#111116;border:1px solid #393943;border-radius:8px;font:inherit;outline:none;margin-bottom:10px}
+.chat-alan:focus{border-color:var(--kirmizi)}
+.chat-mesaj-giris{resize:vertical;min-height:70px;max-height:150px}
+.chat-alt-form{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.chat-karakter{font-size:12px;color:var(--soluk)}
+.chat-gonder,.yorum-gonder{display:inline-block;padding:12px 22px;background:var(--kirmizi);color:white;border:0;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
+.chat-gonder:hover,.yorum-gonder:hover{background:#ce3540}
+.chat-gonder:disabled,.yorum-gonder:disabled{opacity:.6;cursor:not-allowed}
+.chat-bilgi{color:var(--soluk);font-size:13px;line-height:1.6;margin:10px 0 0}
+.chat-bilgi.hata{color:#ff737c}
 .yorum-bolumu{margin-top:35px;padding-top:28px;border-top:1px solid #292932}
 .yorum-baslik{font-size:25px;margin:0 0 8px}
 .yorum-alt-baslik{color:var(--soluk);font-size:14px;margin:0 0 22px}
@@ -34,9 +65,7 @@ a{color:inherit;text-decoration:none}
 .form-alan input,.form-alan textarea{width:100%;padding:13px 14px;color:var(--yazi);background:#111116;border:1px solid #393943;border-radius:8px;font:inherit;outline:none}
 .form-alan input:focus,.form-alan textarea:focus{border-color:var(--kirmizi)}
 .form-alan textarea{min-height:110px;resize:vertical}
-.yorum-gonder{display:inline-block;padding:12px 22px;background:var(--kirmizi);color:white;border:0;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
 .yorum-gonder:hover{background:#ce3540}
-.yorum-gonder:disabled{opacity:.6;cursor:not-allowed}
 .yorum-mesaj{color:var(--soluk);font-size:14px;line-height:1.6;margin-top:12px}
 .yorum-listesi{display:grid;gap:14px}
 .yorum-kart{background:var(--kart);border:1px solid #292932;border-radius:10px;padding:17px;overflow-wrap:anywhere}
@@ -45,12 +74,17 @@ a{color:inherit;text-decoration:none}
 .yorum-tarih{color:var(--soluk);font-size:12px}
 .yorum-metni{color:#d8d8e0;line-height:1.7;white-space:pre-wrap;margin:0}
 .alt-bilgi{border-top:1px solid #292932;padding:25px 20px;text-align:center;color:var(--soluk);font-size:13px}
+
 @media(max-width:600px){
 .menu-icerik{align-items:flex-start;flex-direction:column}
 .ana-icerik{padding:22px 14px 40px}
 .video-kapsayici{border-radius:7px}
 .yorum-form{padding:14px}
 .yorum-ust{align-items:flex-start;flex-direction:column;gap:6px}
+.chat-mesajlar{height:320px;padding:11px}
+.chat-mesaj{max-width:96%}
+.chat-form{padding:11px}
+.chat-gonder{padding:12px 17px}
 }
 </style>
 </head>
@@ -73,6 +107,50 @@ a{color:inherit;text-decoration:none}
     <img class="afis" id="film-afis" alt="Film afişi" hidden>
     <p class="aciklama" id="film-aciklama"></p>
 
+    <!-- Film bazlı canlı sohbet -->
+    <section class="chat-bolumu" aria-labelledby="chat-baslik">
+      <h2 class="chat-baslik" id="chat-baslik">Canlı Sohbet 💬</h2>
+      <p class="chat-alt">
+        Bu filmi izleyenlerle sohbet et. Takma adınla katıl, mesajların canlı olarak görünsün.
+      </p>
+
+      <div class="chat-panel">
+        <div class="chat-ust">
+          <span class="chat-oda" id="chat-oda">Film sohbet odası</span>
+          <span class="chat-durum">
+            <span class="chat-nokta" id="chat-nokta"></span>
+            <span id="chat-durum-yazi">Bağlanıyor...</span>
+          </span>
+        </div>
+
+        <div class="chat-mesajlar" id="chat-mesajlar" aria-live="polite" aria-label="Canlı sohbet mesajları">
+          <p class="chat-bos">Sohbet yükleniyor...</p>
+        </div>
+
+        <form class="chat-form" id="chat-form">
+          <label for="chat-isim" class="form-alan">
+            <span style="display:block;margin-bottom:8px;font-size:14px;font-weight:bold">Takma adın</span>
+            <input class="chat-alan" id="chat-isim" type="text"
+              maxlength="30" placeholder="Sohbette görünecek adın"
+              autocomplete="nickname" required>
+          </label>
+
+          <label for="chat-metin" class="form-alan">
+            <span style="display:block;margin-bottom:8px;font-size:14px;font-weight:bold">Mesajın</span>
+            <textarea class="chat-alan chat-mesaj-giris" id="chat-metin"
+              maxlength="500" placeholder="Bir mesaj yaz..." required></textarea>
+          </label>
+
+          <div class="chat-alt-form">
+            <span class="chat-karakter"><span id="chat-karakter-sayi">0</span>/500</span>
+            <button class="chat-gonder" id="chat-gonder" type="submit">Mesajı gönder</button>
+          </div>
+          <p class="chat-bilgi" id="chat-bilgi" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Mevcut yorum sistemi -->
     <section class="yorum-bolumu" aria-labelledby="yorum-baslik">
       <h2 class="yorum-baslik" id="yorum-baslik">Yorumlar</h2>
       <p class="yorum-alt-baslik">Film hakkındaki düşünceni paylaş.</p>
@@ -112,12 +190,29 @@ a{color:inherit;text-decoration:none}
   const durum = $("film-durumu");
   const icerik = $("film-icerigi");
   const videoKapsayici = $("video-kapsayici");
+
   const yorumForm = $("yorum-form");
   const yorumIsim = $("yorum-isim");
   const yorumMetni = $("yorum-metni");
   const yorumGonder = $("yorum-gonder");
   const yorumMesaj = $("yorum-mesaj");
   const yorumListesi = $("yorum-listesi");
+
+  const chatForm = $("chat-form");
+  const chatIsim = $("chat-isim");
+  const chatMetin = $("chat-metin");
+  const chatGonder = $("chat-gonder");
+  const chatMesajlar = $("chat-mesajlar");
+  const chatBilgi = $("chat-bilgi");
+  const chatDurumYazi = $("chat-durum-yazi");
+  const chatNokta = $("chat-nokta");
+  const chatKarakterSayi = $("chat-karakter-sayi");
+
+  let client = null;
+  let chatKanali = null;
+  let aktifFilmId = "";
+  let sonGonderim = 0;
+  const gorulenMesajlar = new Set();
 
   function hataGoster(mesaj){
     durum.hidden = false;
@@ -135,7 +230,6 @@ a{color:inherit;text-decoration:none}
     }
   }
 
-  // Veritabanında hangi platform bağlantısı varsa onu tanır.
   function videoBilgisi(adres){
     if(!adres || typeof adres !== "string") return null;
 
@@ -144,26 +238,17 @@ a{color:inherit;text-decoration:none}
 
     const host = url.hostname.toLowerCase().replace(/^www\./,"");
 
-    // Mail.ru: YouTube bağlantısı gerektirmez.
-    if(
-      host === "my.mail.ru" &&
-      /^\/video\/embed\/\d+\/?$/.test(url.pathname)
-    ){
-      return {
-        tur:"mailru",
-        adres:url.href
-      };
+    if(host === "my.mail.ru" &&
+       /^\/video\/embed\/\d+\/?$/.test(url.pathname)){
+      return {tur:"mailru",adres:url.href};
     }
 
-    // YouTube
     let id = "";
 
     if(host === "youtu.be"){
       id = url.pathname.split("/").filter(Boolean)[0] || "";
     }else if([
-      "youtube.com",
-      "m.youtube.com",
-      "music.youtube.com",
+      "youtube.com","m.youtube.com","music.youtube.com",
       "youtube-nocookie.com"
     ].includes(host)){
       if(url.pathname === "/watch"){
@@ -186,16 +271,34 @@ a{color:inherit;text-decoration:none}
     return null;
   }
 
-  function mesajGoster(metin,hata=false){
-    yorumMesaj.textContent = metin;
-    yorumMesaj.style.color = hata ? "#ff737c" : "var(--soluk)";
-  }
-
   function tarihFormatla(tarih){
     if(!tarih) return "";
     const d = new Date(tarih);
     if(Number.isNaN(d.getTime())) return "";
     return d.toLocaleString("tr-TR",{dateStyle:"short",timeStyle:"short"});
+  }
+
+  function mesajGoster(metin,hata=false){
+    yorumMesaj.textContent = metin;
+    yorumMesaj.style.color = hata ? "#ff737c" : "var(--soluk)";
+  }
+
+  function chatBilgiGoster(metin,hata=false){
+    chatBilgi.textContent = metin;
+    chatBilgi.classList.toggle("hata",hata);
+  }
+
+  function chatDurumAyarla(metin,canli=false){
+    chatDurumYazi.textContent = metin;
+    chatNokta.classList.toggle("canli",canli);
+  }
+
+  function chatBosMesaji(metin){
+    chatMesajlar.replaceChildren();
+    const p = document.createElement("p");
+    p.className = "chat-bos";
+    p.textContent = metin;
+    chatMesajlar.append(p);
   }
 
   function yorumKarti(yorum){
@@ -222,7 +325,7 @@ a{color:inherit;text-decoration:none}
     return kart;
   }
 
-  async function yorumlariYukle(client,filmId){
+  async function yorumlariYukle(filmId){
     yorumListesi.replaceChildren();
 
     const {data,error} = await client
@@ -253,6 +356,194 @@ a{color:inherit;text-decoration:none}
     yorumListesi.append(frag);
   }
 
+  function chatMesajKarti(mesaj){
+    const kart = document.createElement("article");
+    kart.className = "chat-mesaj";
+
+    if(mesaj.nickname === chatIsim.value.trim()){
+      kart.classList.add("chat-mesaj-kendi");
+    }
+
+    const ust = document.createElement("div");
+    ust.className = "chat-mesaj-ust";
+
+    const isim = document.createElement("span");
+    isim.className = "chat-isim";
+    isim.textContent = mesaj.nickname || "İzleyici";
+
+    const saat = document.createElement("time");
+    saat.className = "chat-saat";
+    saat.textContent = tarihFormatla(mesaj.created_at);
+
+    const yazi = document.createElement("p");
+    yazi.className = "chat-mesaj-yazi";
+    yazi.textContent = mesaj.message || "";
+
+    ust.append(isim,saat);
+    kart.append(ust,yazi);
+    return kart;
+  }
+
+  function chatMesajiEkle(mesaj){
+    if(!mesaj || !mesaj.id || gorulenMesajlar.has(mesaj.id)) return;
+
+    const bos = chatMesajlar.querySelector(".chat-bos");
+    if(bos) chatMesajlar.replaceChildren();
+
+    gorulenMesajlar.add(mesaj.id);
+    chatMesajlar.append(chatMesajKarti(mesaj));
+
+    // Tarayıcıda gereksiz büyümeyi önlemek için son 150 mesajı tut.
+    while(chatMesajlar.children.length > 150){
+      chatMesajlar.removeChild(chatMesajlar.firstElementChild);
+    }
+
+    chatMesajlar.scrollTop = chatMesajlar.scrollHeight;
+  }
+
+  async function chatBaslat(filmId,filmBaslik){
+    aktifFilmId = String(filmId);
+    $("chat-oda").textContent = filmBaslik + " — sohbet odası";
+    chatDurumAyarla("Mesajlar yükleniyor...");
+    chatBosMesaji("Sohbet mesajları yükleniyor...");
+
+    const {data,error} = await client
+      .from("movie_chat_messages")
+      .select("id,movie_id,nickname,message,created_at")
+      .eq("movie_id",aktifFilmId)
+      .order("created_at",{ascending:true})
+      .limit(100);
+
+    if(error){
+      console.error("Canlı sohbet yükleme hatası:",error);
+      chatBosMesaji("Sohbet yüklenemedi. Supabase tablosunu ve izinlerini kontrol et.");
+      chatDurumAyarla("Bağlantı hatası");
+      chatBilgiGoster("Mesajlar yüklenemedi. SQL kurulumunu ve Supabase izinlerini kontrol et.",true);
+      return;
+    }
+
+    chatMesajlar.replaceChildren();
+    gorulenMesajlar.clear();
+
+    if(!data || data.length === 0){
+      chatBosMesaji("Henüz mesaj yok. Sohbeti başlatan ilk kişi sen ol!");
+    }else{
+      data.forEach(chatMesajiEkle);
+    }
+
+    if(chatKanali){
+      await client.removeChannel(chatKanali);
+      chatKanali = null;
+    }
+
+    chatKanali = client
+      .channel("film-chat-" + aktifFilmId)
+      .on("postgres_changes",{
+        event:"INSERT",
+        schema:"public",
+        table:"movie_chat_messages",
+        filter:"movie_id=eq." + aktifFilmId
+      },payload=>{
+        if(String(payload.new.movie_id) !== aktifFilmId) return;
+        chatMesajiEkle(payload.new);
+      })
+      .subscribe(status=>{
+        if(status === "SUBSCRIBED"){
+          chatDurumAyarla("Canlı",true);
+          chatBilgiGoster("Canlı bağlantı hazır. Sohbete katılabilirsin.");
+        }else if(status === "CHANNEL_ERROR" || status === "TIMED_OUT"){
+          chatDurumAyarla("Bağlantı sorunu");
+          chatBilgiGoster("Canlı bağlantı kurulamadı. Supabase Realtime ayarını kontrol et.",true);
+        }else if(status === "CLOSED"){
+          chatDurumAyarla("Bağlantı kapandı");
+        }
+      });
+  }
+
+  chatIsim.value = "";
+  try{
+    chatIsim.value = localStorage.getItem("bengusflix_chat_nickname") || "";
+  }catch(_){}
+
+  chatMetin.addEventListener("input",()=>{
+    chatKarakterSayi.textContent = String(chatMetin.value.length);
+  });
+
+  chatIsim.addEventListener("change",()=>{
+    const isim = chatIsim.value.trim().slice(0,30);
+    chatIsim.value = isim;
+    try{
+      if(isim) localStorage.setItem("bengusflix_chat_nickname",isim);
+    }catch(_){}
+  });
+
+  chatForm.addEventListener("submit",async event=>{
+    event.preventDefault();
+
+    const nickname = chatIsim.value.trim();
+    const message = chatMetin.value.trim();
+
+    if(!aktifFilmId){
+      chatBilgiGoster("Film bilgisi henüz hazır değil.",true);
+      return;
+    }
+
+    if(!nickname || nickname.length > 30){
+      chatBilgiGoster("Lütfen 1–30 karakter arasında bir takma ad yaz.",true);
+      chatIsim.focus();
+      return;
+    }
+
+    if(!message || message.length > 500){
+      chatBilgiGoster("Mesajın 1–500 karakter arasında olmalı.",true);
+      chatMetin.focus();
+      return;
+    }
+
+    // Basit istemci tarafı gönderim sınırı.
+    const simdi = Date.now();
+    if(simdi - sonGonderim < 1500){
+      chatBilgiGoster("Yeni mesaj göndermeden önce biraz bekle.",true);
+      return;
+    }
+
+    sonGonderim = simdi;
+    chatGonder.disabled = true;
+    chatGonder.textContent = "Gönderiliyor...";
+    chatBilgiGoster("");
+
+    try{
+      try{
+        localStorage.setItem("bengusflix_chat_nickname",nickname);
+      }catch(_){}
+
+      const {error} = await client
+        .from("movie_chat_messages")
+        .insert({
+          movie_id:aktifFilmId,
+          nickname,
+          message
+        });
+
+      if(error) throw error;
+
+      chatMetin.value = "";
+      chatKarakterSayi.textContent = "0";
+      chatBilgiGoster("Mesaj gönderildi.");
+      chatMetin.focus();
+    }catch(error){
+      console.error("Sohbet mesajı gönderme hatası:",error);
+      chatBilgiGoster(
+        "Mesaj gönderilemedi. Supabase tablosunu, INSERT iznini ve bağlantıyı kontrol et.",
+        true
+      );
+      sonGonderim = 0;
+    }finally{
+      chatGonder.disabled = false;
+      chatGonder.textContent = "Mesajı gönder";
+    }
+  });
+
   try{
     const params = new URLSearchParams(location.search);
     const filmId = params.get("id");
@@ -265,7 +556,7 @@ a{color:inherit;text-decoration:none}
       throw new Error("Supabase ayarları yüklenemedi. supabase-config.js dosyasını kontrol et.");
     }
 
-    const client = window.supabase.createClient(
+    client = window.supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_PUBLISHABLE_KEY
     );
@@ -298,7 +589,6 @@ a{color:inherit;text-decoration:none}
       $("film-afis").hidden = true;
     }
 
-    // Platform, veritabanındaki video bağlantısından otomatik belirlenir.
     const video = videoBilgisi(film.youtube);
     videoKapsayici.replaceChildren();
 
@@ -324,7 +614,10 @@ a{color:inherit;text-decoration:none}
     icerik.hidden = false;
     document.title = (film.title || "Film İzle") + " | BengüşFlix";
 
-    await yorumlariYukle(client,film.id);
+    await Promise.all([
+      yorumlariYukle(film.id),
+      chatBaslat(film.id,film.title || "Film")
+    ]);
 
     yorumForm.addEventListener("submit",async function(event){
       event.preventDefault();
