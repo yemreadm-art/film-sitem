@@ -1,0 +1,130 @@
+```html
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Film İzle | Flix</title>
+  <style>
+    :root { color-scheme:dark; --red:#e50914; --bg:#101014; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:#fff; font-family:Arial,sans-serif; }
+    header { background:#17171d; padding:20px 6%; border-bottom:1px solid #292930; }
+    .logo { font-size:30px; font-weight:900; color:white; text-decoration:none; }
+    .logo span { color:var(--red); }
+    main { max-width:1100px; margin:auto; padding:25px 20px 45px; }
+    .back { display:inline-block; color:#ddd; text-decoration:none; margin-bottom:22px; }
+    .back:hover { color:var(--red); }
+    .player { width:100%; aspect-ratio:16/9; background:#000; border-radius:10px; overflow:hidden; }
+    iframe { width:100%; height:100%; border:0; }
+    h1 { font-size:30px; margin:24px 0 10px; }
+    .meta { color:#bbb; margin-bottom:20px; }
+    .description { line-height:1.7; color:#ddd; white-space:pre-wrap; }
+    #status { color:#bbb; }
+    .poster { max-width:190px; max-height:280px; object-fit:cover; border-radius:8px; margin-top:22px; }
+    @media(max-width:600px) { h1 { font-size:24px; } main { padding:20px 14px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="logo" href="./index.html">Fl<span>i</span>x</a>
+  </header>
+
+  <main>
+    <a class="back" href="./index.html">← Film arşivine dön</a>
+    <p id="status">Film yükleniyor...</p>
+    <div id="content" hidden>
+      <div class="player" id="player"></div>
+      <h1 id="title"></h1>
+      <div class="meta" id="meta"></div>
+      <p class="description" id="description"></p>
+      <img class="poster" id="poster" hidden alt="Film afişi">
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://uiyygffttyzkwzsjgmog.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Ea9e2nv1qrNkSYGq_SjKUQ_E4b4Cie5";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const status = document.getElementById("status");
+    const content = document.getElementById("content");
+
+    function getYouTubeId(value) {
+      try {
+        const url = new URL(value);
+        const host = url.hostname.toLowerCase().replace(/^www\./, "");
+
+        if (host === "youtu.be") {
+          return url.pathname.split("/").filter(Boolean)[0] || null;
+        }
+
+        if (host === "youtube.com" || host === "m.youtube.com" ||
+            host === "music.youtube.com" || host === "youtube-nocookie.com") {
+          if (url.pathname === "/watch") return url.searchParams.get("v");
+          const parts = url.pathname.split("/").filter(Boolean);
+          if (["embed", "shorts", "live"].includes(parts[0])) return parts[1] || null;
+        }
+      } catch (_) {}
+      return null;
+    }
+
+    async function loadMovie() {
+      const id = new URLSearchParams(window.location.search).get("id");
+
+      if (!id) {
+        status.textContent = "Film seçilmedi. Ana sayfadan bir film seç.";
+        return;
+      }
+
+      const { data: movie, error } = await db
+        .from("movies")
+        .select("id,title,youtube,genre,year,rating,poster,description")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error || !movie) {
+        status.textContent = "Film bulunamadı veya yüklenemedi.";
+        return;
+      }
+
+      document.title = movie.title + " | Flix";
+      document.getElementById("title").textContent = movie.title || "Film";
+      document.getElementById("meta").textContent =
+        [movie.year, movie.genre, movie.rating ? "★ " + movie.rating : ""]
+          .filter(Boolean).join(" · ");
+      document.getElementById("description").textContent =
+        movie.description || "Bu film için henüz açıklama eklenmemiş.";
+
+      if (movie.poster) {
+        const poster = document.getElementById("poster");
+        poster.src = movie.poster;
+        poster.hidden = false;
+        poster.onerror = () => poster.hidden = true;
+      }
+
+      const videoId = getYouTubeId(movie.youtube || "");
+      const player = document.getElementById("player");
+
+      if (videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+        const iframe = document.createElement("iframe");
+        iframe.src = "https://www.youtube-nocookie.com/embed/" + videoId;
+        iframe.title = movie.title + " video oynatıcı";
+        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        player.appendChild(iframe);
+      } else {
+        player.innerHTML = '<div style="padding:25px;text-align:center;color:#ddd">Bu film için geçerli bir YouTube bağlantısı eklenmemiş. Yönetim panelinden bağlantıyı kontrol et.</div>';
+      }
+
+      status.hidden = true;
+      content.hidden = false;
+    }
+
+    loadMovie();
+  </script>
+</body>
+</html>
+```
