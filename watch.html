@@ -661,7 +661,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
       throw new Error("Supabase ayarları yüklenemedi. supabase-config.js dosyasını kontrol et.");
     }
 
-    client = window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY);
+    client = window.supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_PUBLISHABLE_KEY
+    );
 
     const {data:film,error} = await client.from("movies")
       .select("id,title,youtube,genre,year,rating,poster,description")
@@ -714,6 +717,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     durum.hidden = true;
     icerik.hidden = false;
     document.title = (film.title || "Film İzle") + " | BengüşFlix";
+
+    /* TOPLAM İZLENME SAYISINI KAYDET */
+    const {error:izlenmeHatasi} = await client
+      .from("movie_views")
+      .insert({movie_id:String(film.id)});
+
+    if(izlenmeHatasi){
+      console.warn("İzlenme kaydedilemedi:",izlenmeHatasi.message);
+    }
 
     /* CANLI İZLEYİCİ KAYDI */
     if(window.BengusPresence){
