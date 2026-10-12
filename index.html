@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -116,13 +115,22 @@ button, input { font: inherit; }
 }
 .arama:focus { border-color: var(--kirmizi); }
 
+.film-sayfa-duzeni {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  align-items: start;
+  gap: 26px;
+}
+.film-ana-alan { min-width: 0; }
+
 .film-listesi {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 22px;
 }
 .film-karti {
   display: block;
+  min-width: 0;
   overflow: hidden;
   background: var(--kart);
   border: 1px solid #292932;
@@ -173,6 +181,127 @@ button, input { font: inherit; }
   padding: 18px 0;
   line-height: 1.7;
 }
+.gizli { display: none !important; }
+
+/* SAĞ SÜTUN */
+.sag-panel {
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+  position: sticky;
+  top: 18px;
+}
+.yan-kart {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--kart);
+  border: 1px solid #30303b;
+  border-radius: 11px;
+}
+.yan-kart-baslik {
+  margin: 0;
+  padding: 17px 16px 13px;
+  font-size: 17px;
+  line-height: 1.5;
+  border-bottom: 1px solid #30303b;
+}
+.yan-kart-aciklama {
+  color: var(--soluk);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 10px 16px 0;
+}
+.yan-kart-icerik {
+  padding: 6px 15px 12px;
+}
+.yan-bos {
+  color: var(--soluk);
+  font-size: 13px;
+  line-height: 1.7;
+  padding: 10px 0;
+  overflow-wrap: anywhere;
+}
+.son-yorum {
+  display: block;
+  padding: 13px 0;
+  border-bottom: 1px solid #33333d;
+}
+.son-yorum:last-child { border-bottom: 0; }
+.son-yorum:hover .yorum-film-adi { color: #ff8991; }
+.yorum-satir-ust {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.yorum-yazan {
+  font-size: 12px;
+  font-weight: bold;
+  color: #ff8991;
+  overflow-wrap: anywhere;
+}
+.yorum-zaman {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--soluk);
+}
+.yorum-film-adi {
+  display: block;
+  font-size: 12px;
+  color: #e6e6ed;
+  margin-bottom: 5px;
+  overflow-wrap: anywhere;
+}
+.yorum-kisa-metin {
+  margin: 0;
+  color: #bdbdc9;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.izlenen-satir {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px 0;
+  border-bottom: 1px solid #33333d;
+}
+.izlenen-satir:last-child { border-bottom: 0; }
+.izlenen-sira {
+  flex: 0 0 30px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background: #30232b;
+  color: #ff8991;
+  font-weight: 900;
+}
+.izlenen-bilgi { flex: 1; min-width: 0; }
+.izlenen-film-adi {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.izlenen-film-adi:hover { color: #ff8991; }
+.izlenme-sayi {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--soluk);
+}
+.yenile-notu {
+  padding: 0 15px 14px;
+  color: #777784;
+  font-size: 10px;
+  line-height: 1.5;
+}
 .alt-bilgi {
   border-top: 1px solid #292932;
   padding: 28px 20px;
@@ -180,7 +309,6 @@ button, input { font: inherit; }
   text-align: center;
   font-size: 13px;
 }
-.gizli { display: none !important; }
 
 /* CANLI İZLEYİCİLER */
 .canli-bolum {
@@ -195,9 +323,7 @@ button, input { font: inherit; }
   flex-wrap: wrap;
   gap: 12px;
 }
-.canli-baslik-satiri .bolum-basligi {
-  margin-bottom: 8px;
-}
+.canli-baslik-satiri .bolum-basligi { margin-bottom: 8px; }
 .canli-etiket {
   display: inline-flex;
   align-items: center;
@@ -279,21 +405,30 @@ button, input { font: inherit; }
   font-size: 12px;
   margin: 12px 0 18px;
 }
-.canli-yukleniyor {
-  color: var(--soluk);
-  padding: 18px 0;
-}
 
+@media (max-width: 950px) {
+  .film-sayfa-duzeni { grid-template-columns: minmax(0, 1fr); }
+  .sag-panel {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
 @media (max-width: 600px) {
   .menu-icerik { align-items: flex-start; flex-direction: column; }
   .menu-baglantilari { gap: 16px; }
   .karsilama { padding: 55px 20px; }
+  .ana-icerik { padding: 28px 14px 40px; }
+  .film-sayfa-duzeni { gap: 28px; }
   .film-listesi {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
   .film-bilgileri { padding: 11px; }
   .film-adi { font-size: 15px; }
+  .film-aciklama { font-size: 12px; }
+  .sag-panel { grid-template-columns: minmax(0, 1fr); }
+  .canli-bolum { padding: 25px 14px 30px; }
   .canli-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .canli-film-karti { padding: 12px; }
   .canli-film-adi { font-size: 15px; }
@@ -324,7 +459,6 @@ button, input { font: inherit; }
   </div>
 </section>
 
-<!-- CANLI İZLEYİCİLER -->
 <section class="canli-bolum" id="canli-izleme">
   <div class="canli-baslik-satiri">
     <h2 class="bolum-basligi">🔴 Şu An İzlenen Filmler</h2>
@@ -340,27 +474,45 @@ button, input { font: inherit; }
 </section>
 
 <main class="ana-icerik" id="filmler">
-  <h2 class="bolum-basligi">Film Koleksiyonu</h2>
-  <p class="bolum-aciklama">
-    Yönetim panelinden eklediğin filmler burada gösterilir.
-    Bir filme tıklayarak kendi film izleme sayfanda açabilirsin.
-  </p>
+  <div class="film-sayfa-duzeni">
 
-  <div class="arama-alani">
-    <input
-      class="arama"
-      id="film-arama"
-      type="search"
-      placeholder="Film adına göre ara..."
-      aria-label="Film adına göre ara"
-    >
+    <section class="film-ana-alan" aria-labelledby="film-koleksiyon-baslik">
+      <h2 class="bolum-basligi" id="film-koleksiyon-baslik">Film Koleksiyonu</h2>
+      <p class="bolum-aciklama">
+        Yönetim panelinden eklediğin filmler burada gösterilir.
+        Bir filme tıklayarak kendi film izleme sayfanda açabilirsin.
+      </p>
+
+      <div class="arama-alani">
+        <input class="arama" id="film-arama" type="search"
+          placeholder="Film adına göre ara..." aria-label="Film adına göre ara">
+      </div>
+
+      <p class="durum" id="film-durumu">Veritabanına bağlanılıyor...</p>
+      <div class="film-listesi" id="veritabani-filmleri"></div>
+    </section>
+
+    <aside class="sag-panel" aria-label="Son yorumlar ve izlenme sayıları">
+
+      <section class="yan-kart" aria-labelledby="son-yorum-baslik">
+        <h2 class="yan-kart-baslik" id="son-yorum-baslik">💬 Son Yorumlar</h2>
+        <p class="yan-kart-aciklama">Filmlere yapılan en yeni 8 yorum.</p>
+        <div class="yan-kart-icerik" id="son-yorumlar" aria-live="polite">
+          <p class="yan-bos">Yorumlar yükleniyor...</p>
+        </div>
+      </section>
+
+      <section class="yan-kart" aria-labelledby="en-cok-izlenen-baslik">
+        <h2 class="yan-kart-baslik" id="en-cok-izlenen-baslik">🔥 En Çok İzlenenler</h2>
+        <p class="yan-kart-aciklama">Toplam izlenme sayısına göre ilk 5 film.</p>
+        <div class="yan-kart-icerik" id="en-cok-izlenenler" aria-live="polite">
+          <p class="yan-bos">İzlenme bilgileri yükleniyor...</p>
+        </div>
+        <div class="yenile-notu">İzlenme sayısı, film sayfası her açıldığında artar.</div>
+      </section>
+
+    </aside>
   </div>
-
-  <p class="durum" id="film-durumu">
-    Veritabanına bağlanılıyor...
-  </p>
-
-  <div class="film-listesi" id="veritabani-filmleri"></div>
 </main>
 
 <section class="ana-icerik" id="hakkinda">
@@ -384,6 +536,8 @@ button, input { font: inherit; }
   const durum = document.getElementById("film-durumu");
   const liste = document.getElementById("veritabani-filmleri");
   const arama = document.getElementById("film-arama");
+  const sonYorumlar = document.getElementById("son-yorumlar");
+  const enCokIzlenenler = document.getElementById("en-cok-izlenenler");
 
   function eleman(etiket, sinif, metin) {
     const e = document.createElement(etiket);
@@ -392,15 +546,15 @@ button, input { font: inherit; }
     return e;
   }
 
+  function bosMesaj(kapsayici, metin) {
+    kapsayici.replaceChildren(eleman("p", "yan-bos", metin));
+  }
+
   function filmKarti(film) {
     const kart = eleman("a", "film-karti");
     kart.href = "./watch.html?id=" + encodeURIComponent(film.id);
-    kart.dataset.filmAdi =
-      (film.title || "").toLocaleLowerCase("tr-TR");
-    kart.setAttribute(
-      "aria-label",
-      (film.title || "Film") + " filmini izle"
-    );
+    kart.dataset.filmAdi = (film.title || "").toLocaleLowerCase("tr-TR");
+    kart.setAttribute("aria-label", (film.title || "Film") + " filmini izle");
 
     if (film.poster) {
       const afis = eleman("img", "film-afis");
@@ -408,52 +562,149 @@ button, input { font: inherit; }
       afis.alt = (film.title || "Film") + " afişi";
       afis.loading = "lazy";
       afis.onerror = function () {
-        afis.replaceWith(
-          eleman("div", "afis-yok", film.title || "Film")
-        );
+        afis.replaceWith(eleman("div", "afis-yok", film.title || "Film"));
       };
       kart.appendChild(afis);
     } else {
-      kart.appendChild(
-        eleman("div", "afis-yok", film.title || "Film")
-      );
+      kart.appendChild(eleman("div", "afis-yok", film.title || "Film"));
     }
 
     const bilgiler = eleman("div", "film-bilgileri");
-    bilgiler.appendChild(
-      eleman("h3", "film-adi", film.title || "İsimsiz film")
-    );
+    bilgiler.appendChild(eleman("h3", "film-adi", film.title || "İsimsiz film"));
 
     const detaylar = [];
     if (film.year) detaylar.push(String(film.year));
     if (film.genre) detaylar.push(film.genre);
-
-    if (
-      film.rating !== null &&
-      film.rating !== undefined &&
-      film.rating !== ""
-    ) {
+    if (film.rating !== null && film.rating !== undefined && film.rating !== "") {
       detaylar.push("★ " + film.rating);
     }
 
     if (detaylar.length) {
-      bilgiler.appendChild(
-        eleman("div", "film-detay", detaylar.join(" · "))
-      );
+      bilgiler.appendChild(eleman("div", "film-detay", detaylar.join(" · ")));
     }
 
     if (film.description) {
-      bilgiler.appendChild(
-        eleman("p", "film-aciklama", film.description)
-      );
+      bilgiler.appendChild(eleman("p", "film-aciklama", film.description));
     }
 
-    bilgiler.appendChild(
-      eleman("span", "film-baglantisi", "Filmi İzle →")
-    );
-
+    bilgiler.appendChild(eleman("span", "film-baglantisi", "Filmi İzle →"));
     kart.appendChild(bilgiler);
     return kart;
+  }
+
+  function tarihiKisalt(tarih) {
+    if (!tarih) return "";
+    const d = new Date(tarih);
+    if (Number.isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("tr-TR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit"
+    });
+  }
+
+  async function sonYorumlariYukle(istemci, filmHaritasi) {
+    bosMesaj(sonYorumlar, "Yorumlar yükleniyor...");
+
+    const { data, error } = await istemci
+      .from("movie_comments")
+      .select("id,movie_id,name,comment,created_at")
+      .order("created_at", { ascending: false })
+      .limit(8);
+
+    if (error) {
+      console.error("Son yorumlar yüklenemedi:", error);
+      bosMesaj(sonYorumlar, "Yorumlar yüklenemedi. Tablo ve SELECT izinlerini kontrol et.");
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      bosMesaj(sonYorumlar, "Henüz yorum yapılmamış. İlk yorumu sen bırak! 🍿");
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+
+    data.forEach(function (yorum) {
+      const film = filmHaritasi.get(String(yorum.movie_id));
+      const kart = eleman("a", "son-yorum");
+      kart.href = "./watch.html?id=" + encodeURIComponent(yorum.movie_id);
+      kart.setAttribute("aria-label", (film?.title || "Film") + " yorumunu oku");
+
+      const ust = eleman("div", "yorum-satir-ust");
+      ust.append(
+        eleman("span", "yorum-yazan", yorum.name || "İsimsiz"),
+        eleman("time", "yorum-zaman", tarihiKisalt(yorum.created_at))
+      );
+
+      const filmAdi = eleman("span", "yorum-film-adi", film?.title || "Film");
+      const yorumMetni = (yorum.comment || "").trim();
+      const kisaMetin = yorumMetni.length > 115
+        ? yorumMetni.slice(0, 115) + "…"
+        : yorumMetni;
+
+      kart.append(ust, filmAdi, eleman("p", "yorum-kisa-metin", kisaMetin));
+      frag.appendChild(kart);
+    });
+
+    sonYorumlar.replaceChildren(frag);
+  }
+
+  async function izlenmeleriYukle(istemci, filmHaritasi) {
+    bosMesaj(enCokIzlenenler, "İzlenme bilgileri yükleniyor...");
+
+    /*
+      movie_view_counts, movie_views tablosundaki her film için
+      toplam izlenme sayısını veren Supabase görünümüdür.
+    */
+    const { data, error } = await istemci
+      .from("movie_view_counts")
+      .select("movie_id,view_count")
+      .order("view_count", { ascending: false })
+      .limit(5);
+
+    if (error) {
+      console.error("İzlenme sayıları yüklenemedi:", error);
+      bosMesaj(
+        enCokIzlenenler,
+        "İzlenme listesi henüz hazır değil. movie_views tablosunu ve movie_view_counts görünümünü oluştur."
+      );
+      return;
+    }
+
+    const filmler = (data || [])
+      .map(function (kayit) {
+        return {
+          film: filmHaritasi.get(String(kayit.movie_id)),
+          id: kayit.movie_id,
+          sayi: Number(kayit.view_count) || 0
+        };
+      })
+      .filter(function (kayit) {
+        return Boolean(kayit.film);
+      });
+
+    if (filmler.length === 0) {
+      bosMesaj(enCokIzlenenler, "Henüz izlenme kaydı yok. Bir film açarak listeyi başlat! 🎬");
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+
+    filmler.forEach(function (kayit, index) {
+      const satir = eleman("div", "izlenen-satir");
+      const sira = eleman("span", "izlenen-sira", String(index + 1));
+      const bilgi = eleman("div", "izlenen-bilgi");
+      const link = eleman("a", "izlenen-film-adi", kayit.film.title || "İsimsiz film");
+      link.href = "./watch.html?id=" + encodeURIComponent(kayit.id);
+
+      const sayi = kayit.sayi.toLocaleString("tr-TR") + " izlenme";
+      bilgi.append(link, eleman("span", "izlenme-sayi", sayi));
+      satir.append(sira, bilgi);
+      frag.appendChild(satir);
+    });
+
+    enCokIzlenenler.replaceChildren(frag);
   }
 
   try {
@@ -474,35 +725,44 @@ button, input { font: inherit; }
 
     const sonuc = await istemci
       .from("movies")
-      .select(
-        "id,title,youtube,genre,year,rating,poster,description,created_at"
-      )
+      .select("id,title,youtube,genre,year,rating,poster,description,created_at")
       .order("created_at", { ascending: false });
 
     if (sonuc.error) throw sonuc.error;
 
     liste.replaceChildren();
+    const filmler = sonuc.data || [];
+    const filmHaritasi = new Map(
+      filmler.map(function (film) {
+        return [String(film.id), film];
+      })
+    );
 
-    if (!sonuc.data || sonuc.data.length === 0) {
+    if (filmler.length === 0) {
       durum.textContent = "Henüz kayıtlı film yok.";
     } else {
-      durum.textContent =
-        sonuc.data.length + " film başarıyla yüklendi.";
-
-      sonuc.data.forEach(function (film) {
-        liste.appendChild(filmKarti(film));
+      durum.textContent = filmler.length + " film başarıyla yüklendi.";
+      const frag = document.createDocumentFragment();
+      filmler.forEach(function (film) {
+        frag.appendChild(filmKarti(film));
       });
+      liste.appendChild(frag);
     }
+
+    await Promise.all([
+      sonYorumlariYukle(istemci, filmHaritasi),
+      izlenmeleriYukle(istemci, filmHaritasi)
+    ]);
+
   } catch (hata) {
     console.error("Film yükleme hatası:", hata);
-    durum.textContent =
-      "Filmler yüklenemedi: " + hata.message;
+    durum.textContent = "Filmler yüklenemedi: " + hata.message;
+    bosMesaj(sonYorumlar, "Yorumlar yüklenemedi.");
+    bosMesaj(enCokIzlenenler, "İzlenme bilgileri yüklenemedi.");
   }
 
   arama.addEventListener("input", function () {
-    const kelime = arama.value
-      .trim()
-      .toLocaleLowerCase("tr-TR");
+    const kelime = arama.value.trim().toLocaleLowerCase("tr-TR");
 
     liste.querySelectorAll(".film-karti").forEach(function (kart) {
       const ad = kart.dataset.filmAdi || "";
@@ -512,9 +772,7 @@ button, input { font: inherit; }
 })();
 </script>
 
-<!-- Canlı izleyici sistemi -->
 <script src="./presence.js"></script>
 
 </body>
 </html>
-```
