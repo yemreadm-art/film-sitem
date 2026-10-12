@@ -15,7 +15,10 @@
   --yazi: #f6f6f8;
   --soluk: #aaaab6;
 }
-* { box-sizing: border-box; }
+
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -44,12 +47,24 @@ a {
   gap: 20px;
 }
 
+/* BengüşFlix logosu */
 .logo {
+  display: inline-block;
+  color: #f6f6f8 !important;
   font-size: 25px;
   font-weight: 900;
+  line-height: 1.3;
+  white-space: nowrap;
+  visibility: visible;
+  opacity: 1;
 }
 
-.logo span { color: var(--kirmizi); }
+.logo span {
+  display: inline;
+  color: #e74752 !important;
+  visibility: visible;
+  opacity: 1;
+}
 
 .geri {
   color: #ff737c;
@@ -141,7 +156,7 @@ a {
 
 <header class="ust-menu">
   <div class="menu-icerik">
-    <a class="logo" href="./index.html">
+    <a class="logo" href="./index.html" aria-label="BengüşFlix ana sayfa">
       Bengüş<span>Flix</span>
     </a>
 
@@ -239,7 +254,6 @@ a {
       );
     }
 
-    // Çalışan sistemdeki Supabase ayarları aynen korunur.
     const istemci = window.supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_PUBLISHABLE_KEY
@@ -262,6 +276,7 @@ a {
     baslik.textContent = film.title || "İsimsiz film";
 
     const detaylar = [];
+
     if (film.year) detaylar.push(String(film.year));
     if (film.genre) detaylar.push(film.genre);
 
@@ -279,6 +294,7 @@ a {
     if (film.poster) {
       afis.src = film.poster;
       afis.hidden = false;
+
       afis.onerror = function () {
         afis.hidden = true;
       };
