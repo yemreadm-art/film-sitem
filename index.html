@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -182,6 +182,108 @@ button, input { font: inherit; }
 }
 .gizli { display: none !important; }
 
+/* CANLI İZLEYİCİLER */
+.canli-bolum {
+  max-width: 1200px;
+  margin: auto;
+  padding: 32px 20px 40px;
+}
+.canli-baslik-satiri {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.canli-baslik-satiri .bolum-basligi {
+  margin-bottom: 8px;
+}
+.canli-etiket {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #4ade80;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.canli-nokta {
+  width: 8px;
+  height: 8px;
+  background: #4ade80;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #4ade8080;
+}
+.canli-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 15px;
+}
+.canli-film-karti {
+  min-width: 0;
+  padding: 18px;
+  background: var(--kart);
+  border: 1px solid #30303b;
+  border-radius: 10px;
+  transition: border-color .2s, transform .2s;
+}
+.canli-film-karti:hover {
+  border-color: #555563;
+  transform: translateY(-2px);
+}
+.canli-film-adi {
+  margin: 0 0 10px;
+  font-size: 17px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.canli-kisi-sayisi {
+  margin: 0 0 14px;
+  color: #4ade80;
+  font-size: 13px;
+}
+.canli-takma-adlar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.canli-takma-ad {
+  display: inline-block;
+  max-width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #383844;
+  border-radius: 20px;
+  background: #25252e;
+  color: #eeeef4;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.canli-filme-git {
+  display: inline-block;
+  margin-top: 16px;
+  color: #ff737c;
+  font-size: 13px;
+  font-weight: bold;
+}
+.canli-bos {
+  padding: 20px;
+  color: var(--soluk);
+  background: var(--kart);
+  border: 1px solid #292932;
+  border-radius: 10px;
+  line-height: 1.7;
+}
+.canli-durum {
+  min-height: 20px;
+  color: var(--soluk);
+  font-size: 12px;
+  margin: 12px 0 18px;
+}
+.canli-yukleniyor {
+  color: var(--soluk);
+  padding: 18px 0;
+}
+
 @media (max-width: 600px) {
   .menu-icerik { align-items: flex-start; flex-direction: column; }
   .menu-baglantilari { gap: 16px; }
@@ -192,6 +294,9 @@ button, input { font: inherit; }
   }
   .film-bilgileri { padding: 11px; }
   .film-adi { font-size: 15px; }
+  .canli-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .canli-film-karti { padding: 12px; }
+  .canli-film-adi { font-size: 15px; }
 }
 </style>
 </head>
@@ -203,6 +308,7 @@ button, input { font: inherit; }
     <a class="logo" href="#anasayfa">Bengüş<span>Flix</span></a>
     <nav class="menu-baglantilari">
       <a href="#anasayfa">Ana Sayfa</a>
+      <a href="#canli-izleme">Şu An İzlenenler</a>
       <a href="#filmler">Filmler</a>
       <a href="#hakkinda">Hakkında</a>
       <a href="./admin.html">Yönetim Paneli</a>
@@ -214,8 +320,22 @@ button, input { font: inherit; }
   <div class="karsilama-icerik">
     <div class="kucuk-baslik">Sana özel film koleksiyonun :)</div>
     <h1>İzlenecek yeni bir <span>Kemal Sunal filmi</span> keşfet.</h1>
-    </p>
     <a class="dugme" href="#filmler">Filmleri Gör</a>
+  </div>
+</section>
+
+<!-- CANLI İZLEYİCİLER -->
+<section class="canli-bolum" id="canli-izleme">
+  <div class="canli-baslik-satiri">
+    <h2 class="bolum-basligi">🔴 Şu An İzlenen Filmler</h2>
+    <span class="canli-etiket"><span class="canli-nokta"></span> CANLI</span>
+  </div>
+  <p class="bolum-aciklama">
+    BengüşFlix'te kimlerin hangi filmi izlediğini keşfet.
+  </p>
+  <p class="canli-durum" id="canli-izleyici-durum">İzleyiciler yükleniyor...</p>
+  <div class="canli-grid" id="canli-izleyiciler">
+    <p class="canli-bos">Canlı izleyiciler yükleniyor... 🍿</p>
   </div>
 </section>
 
@@ -392,5 +512,9 @@ button, input { font: inherit; }
 })();
 </script>
 
+<!-- Canlı izleyici sistemi -->
+<script src="./presence.js"></script>
+
 </body>
 </html>
+```
