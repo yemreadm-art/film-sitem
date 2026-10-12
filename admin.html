@@ -1,0 +1,254 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Film Yönetim Paneli</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 24px; background: #111; color: #fff;
+      font: 16px Arial, sans-serif;
+    }
+    main { max-width: 900px; margin: auto; }
+    h1, h2 { color: #e50914; }
+    form, .movie {
+      background: #202020; padding: 18px; border-radius: 8px;
+      margin: 16px 0;
+    }
+    input, textarea, button {
+      width: 100%; padding: 12px; margin: 7px 0;
+      border-radius: 5px; border: 1px solid #444; font: inherit;
+    }
+    input, textarea { background: #151515; color: white; }
+    button { cursor: pointer; background: #e50914; color: white; border: 0; }
+    button.secondary { background: #555; }
+    button.danger { background: #8b1111; }
+    .hidden { display: none; }
+    .movie { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .movie p { overflow-wrap: anywhere; }
+    #status { white-space: pre-wrap; color: #ffd27d; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Film Yönetim Paneli</h1>
+  <p id="status">Bağlantı hazırlanıyor...</p>
+
+  <section id="login">
+    <h2>Yönetici Girişi</h2>
+    <form id="login-form">
+      <input id="email" type="email" placeholder="E-posta adresin" required>
+      <input id="password" type="password" placeholder="Şifren" required>
+      <button type="submit">Giriş Yap</button>
+    </form>
+  </section>
+
+  <section id="panel" class="hidden">
+    <button id="logout" class="secondary">Çıkış Yap</button>
+    <h2 id="form-title">Yeni Film Ekle</h2>
+
+    <form id="movie-form">
+      <input id="title" placeholder="Film adı" required>
+      <input id="youtube" type="url" placeholder="YouTube video bağlantısı" required>
+      <input id="genre" placeholder="Tür (ör. Aksiyon)">
+      <input id="year" type="number" placeholder="Yıl">
+      <input id="rating" type="number" min="0" max="10" step="0.1" placeholder="Puan (0-10)">
+      <input id="poster" type="url" placeholder="Afiş görseli URL'si (isteğe bağlı)">
+      <textarea id="description" placeholder="Film açıklaması"></textarea>
+      <label><input id="featured" type="checkbox" style="width:auto"> Öne çıkan film</label>
+      <button type="submit">Filmi Kaydet</button>
+      <button id="cancel-edit" type="button" class="secondary hidden">Düzenlemeyi İptal Et</button>
+    </form>
+
+    <h2>Filmler</h2>
+    <div id="movies-list"></div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
+<script>
+(async function () {
+  const status = document.getElementById("status");
+  const login = document.getElementById("login");
+  const panel = document.getElementById("panel");
+
+  if (!window.supabase || !window.SUPABASE_URL ||
+      !window.SUPABASE_PUBLISHABLE_KEY) {
+    status.textContent = "Supabase ayarları bulunamadı. supabase-config.js dosyasını kontrol edin.";
+    return;
+  }
+
+  const db = window.supabase.createClient(
+    window.SUPABASE_URL,
+    window.SUPABASE_PUBLISHABLE_KEY
+  );
+
+  const $ = id => document.getElementById(id);
+  let editingId = null;
+  let movies = [];
+
+  function message(text) {
+    status.textContent = text;
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;",
+      '"': "&quot;", "'": "&#39;"
+    })[c]);
+  }
+
+  function showSession(session) {
+    const signedIn = !!session;
+    login.classList.toggle("hidden", signedIn);
+    panel.classList.toggle("hidden", !signedIn);
+    if (signedIn) {
+      message("Giriş yapıldı.");
+      loadMovies();
+    } else {
+      message("Yönetici girişi gerekli.");
+    }
+  }
+
+  const { data: sessionData } = await db.auth.getSession();
+  showSession(sessionData.session);
+
+  db.auth.onAuthStateChange((_event, session) => {
+    showSession(session);
+  });
+
+  $("login-form").addEventListener("submit", async event => {
+    event.preventDefault();
+    message("Giriş yapılıyor...");
+    const { error } = await db.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("password").value
+    });
+    if (error) message("Giriş başarısız: " + error.message);
+  });
+
+  $("logout").addEventListener("click", async () => {
+    const { error } = await db.auth.signOut();
+    if (error) message("Çıkış yapılamadı: " + error.message);
+    else {
+      resetForm();
+      showSession(null);
+    }
+  });
+
+  async function loadMovies() {
+    const { data, error } = await db
+      .from("movies")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      message("Filmler yüklenemedi: " + error.message);
+      return;
+    }
+
+    movies = data || [];
+    $("movies-list").innerHTML = movies.map(movie => `
+      <article class="movie">
+        <div>
+          <strong>${escapeHTML(movie.title)}</strong>
+          <p>${escapeHTML(movie.genre)} ${movie.year ? "· " + escapeHTML(movie.year) : ""}</p>
+        </div>
+        <div>
+          <button type="button" data-edit="${escapeHTML(movie.id)}">Düzenle</button>
+          <button type="button" class="danger" data-delete="${escapeHTML(movie.id)}">Sil</button>
+        </div>
+      </article>
+    `).join("") || "<p>Henüz film eklenmedi.</p>";
+  }
+
+  function resetForm() {
+    editingId = null;
+    $("movie-form").reset();
+    $("form-title").textContent = "Yeni Film Ekle";
+    $("cancel-edit").classList.add("hidden");
+  }
+
+  $("cancel-edit").addEventListener("click", resetForm);
+
+  $("movie-form").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const yearValue = $("year").value;
+    const ratingValue = $("rating").value;
+    const record = {
+      title: $("title").value.trim(),
+      youtube: $("youtube").value.trim(),
+      genre: $("genre").value.trim(),
+      year: yearValue ? Number(yearValue) : null,
+      rating: ratingValue ? Number(ratingValue) : null,
+      poster: $("poster").value.trim(),
+      description: $("description").value.trim(),
+      featured: $("featured").checked
+    };
+
+    if (!record.title || !record.youtube) {
+      message("Film adı ve YouTube bağlantısı zorunludur.");
+      return;
+    }
+
+    message("Kaydediliyor...");
+    const result = editingId
+      ? await db.from("movies").update(record).eq("id", editingId)
+      : await db.from("movies").insert(record);
+
+    if (result.error) {
+      message("Kaydetme başarısız: " + result.error.message +
+        "\nE-posta için tanımlanan yönetici izinlerini kontrol edin.");
+      return;
+    }
+
+    message("Film kaydedildi.");
+    resetForm();
+    await loadMovies();
+  });
+
+  $("movies-list").addEventListener("click", async event => {
+    const editButton = event.target.closest("[data-edit]");
+    const deleteButton = event.target.closest("[data-delete]");
+
+    if (editButton) {
+      const movie = movies.find(item => String(item.id) === editButton.dataset.edit);
+      if (!movie) return;
+
+      editingId = movie.id;
+      $("title").value = movie.title || "";
+      $("youtube").value = movie.youtube || "";
+      $("genre").value = movie.genre || "";
+      $("year").value = movie.year ?? "";
+      $("rating").value = movie.rating ?? "";
+      $("poster").value = movie.poster || "";
+      $("description").value = movie.description || "";
+      $("featured").checked = !!movie.featured;
+      $("form-title").textContent = "Filmi Düzenle";
+      $("cancel-edit").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    if (deleteButton) {
+      const movie = movies.find(item => String(item.id) === deleteButton.dataset.delete);
+      if (!movie || !confirm('"' + movie.title + '" filmi silinsin mi?')) return;
+
+      message("Siliniyor...");
+      const { error } = await db.from("movies").delete().eq("id", movie.id);
+      if (error) {
+        message("Silme başarısız: " + error.message);
+        return;
+      }
+
+      message("Film silindi.");
+      await loadMovies();
+    }
+  });
+})();
+</script>
+</body>
+</html>
