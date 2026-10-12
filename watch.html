@@ -16,9 +16,7 @@
   --soluk: #aaaab6;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -27,10 +25,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+a { color: inherit; text-decoration: none; }
 
 .ust-menu {
   background: #17171d;
@@ -47,7 +42,6 @@ a {
   gap: 20px;
 }
 
-/* BengüşFlix logosu */
 .logo {
   display: inline-block;
   color: #f6f6f8 !important;
@@ -55,16 +49,9 @@ a {
   font-weight: 900;
   line-height: 1.3;
   white-space: nowrap;
-  visibility: visible;
-  opacity: 1;
 }
 
-.logo span {
-  display: inline;
-  color: #e74752 !important;
-  visibility: visible;
-  opacity: 1;
-}
+.logo span { color: #e74752 !important; }
 
 .geri {
   color: #ff737c;
@@ -127,6 +114,131 @@ a {
   margin-top: 25px;
 }
 
+/* Yorum alanı */
+.yorum-bolumu {
+  margin-top: 35px;
+  padding-top: 28px;
+  border-top: 1px solid #292932;
+}
+
+.yorum-baslik {
+  font-size: 25px;
+  margin: 0 0 8px;
+}
+
+.yorum-alt-baslik {
+  color: var(--soluk);
+  font-size: 14px;
+  margin: 0 0 22px;
+}
+
+.yorum-form {
+  background: var(--kart);
+  border: 1px solid #30303a;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 25px;
+}
+
+.form-alan {
+  display: block;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.form-alan label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.form-alan input,
+.form-alan textarea {
+  width: 100%;
+  padding: 13px 14px;
+  color: var(--yazi);
+  background: #111116;
+  border: 1px solid #393943;
+  border-radius: 8px;
+  font: inherit;
+  outline: none;
+}
+
+.form-alan input:focus,
+.form-alan textarea:focus {
+  border-color: var(--kirmizi);
+}
+
+.form-alan textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.yorum-gonder {
+  display: inline-block;
+  padding: 12px 22px;
+  background: var(--kirmizi);
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.yorum-gonder:hover { background: #ce3540; }
+
+.yorum-gonder:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.yorum-mesaj {
+  color: var(--soluk);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+.yorum-listesi {
+  display: grid;
+  gap: 14px;
+}
+
+.yorum-kart {
+  background: var(--kart);
+  border: 1px solid #292932;
+  border-radius: 10px;
+  padding: 17px;
+  overflow-wrap: anywhere;
+}
+
+.yorum-ust {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.yorum-isim {
+  font-weight: bold;
+  color: #fff;
+}
+
+.yorum-tarih {
+  color: var(--soluk);
+  font-size: 12px;
+}
+
+.yorum-metni {
+  color: #d8d8e0;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
 .alt-bilgi {
   border-top: 1px solid #292932;
   padding: 25px 20px;
@@ -141,12 +253,16 @@ a {
     flex-direction: column;
   }
 
-  .ana-icerik {
-    padding: 22px 14px 40px;
-  }
+  .ana-icerik { padding: 22px 14px 40px; }
 
-  .video-kapsayici {
-    border-radius: 7px;
+  .video-kapsayici { border-radius: 7px; }
+
+  .yorum-form { padding: 14px; }
+
+  .yorum-ust {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
   }
 }
 </style>
@@ -178,6 +294,48 @@ a {
     <img class="afis" id="film-afis" alt="Film afişi" hidden>
 
     <p class="aciklama" id="film-aciklama"></p>
+
+    <!-- Yorum alanı -->
+    <section class="yorum-bolumu" aria-labelledby="yorum-baslik">
+      <h2 class="yorum-baslik" id="yorum-baslik">Yorumlar</h2>
+      <p class="yorum-alt-baslik">Film hakkındaki düşünceni paylaş.</p>
+
+      <form class="yorum-form" id="yorum-form">
+        <div class="form-alan">
+          <label for="yorum-isim">İsmin</label>
+          <input
+            id="yorum-isim"
+            name="name"
+            type="text"
+            maxlength="60"
+            placeholder="İsmini yaz..."
+            autocomplete="nickname"
+            required
+          >
+        </div>
+
+        <div class="form-alan">
+          <label for="yorum-metni">Yorumun</label>
+          <textarea
+            id="yorum-metni"
+            name="comment"
+            maxlength="1000"
+            placeholder="Bu film hakkında ne düşünüyorsun?"
+            required
+          ></textarea>
+        </div>
+
+        <button class="yorum-gonder" id="yorum-gonder" type="submit">
+          Yorumu yayınla
+        </button>
+
+        <p class="yorum-mesaj" id="yorum-mesaj" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="yorum-listesi" id="yorum-listesi">
+        <p class="durum">Yorumlar yükleniyor...</p>
+      </div>
+    </section>
   </section>
 </main>
 
@@ -197,6 +355,13 @@ a {
   const videoKapsayici = document.getElementById("video-kapsayici");
   const afis = document.getElementById("film-afis");
   const aciklama = document.getElementById("film-aciklama");
+
+  const yorumForm = document.getElementById("yorum-form");
+  const yorumIsim = document.getElementById("yorum-isim");
+  const yorumMetni = document.getElementById("yorum-metni");
+  const yorumGonder = document.getElementById("yorum-gonder");
+  const yorumMesaj = document.getElementById("yorum-mesaj");
+  const yorumListesi = document.getElementById("yorum-listesi");
 
   function hataGoster(mesaj) {
     durum.hidden = false;
@@ -223,7 +388,6 @@ a {
           id = url.searchParams.get("v") || "";
         } else {
           const parcalar = url.pathname.split("/").filter(Boolean);
-
           if (["embed", "shorts", "live"].includes(parcalar[0])) {
             id = parcalar[1] || "";
           }
@@ -234,6 +398,85 @@ a {
     } catch (_) {
       return null;
     }
+  }
+
+  function mesajGoster(metin, hata = false) {
+    yorumMesaj.textContent = metin;
+    yorumMesaj.style.color = hata ? "#ff737c" : "var(--soluk)";
+  }
+
+  function tarihFormatla(tarih) {
+    if (!tarih) return "";
+
+    const tarihNesnesi = new Date(tarih);
+    if (Number.isNaN(tarihNesnesi.getTime())) return "";
+
+    return tarihNesnesi.toLocaleString("tr-TR", {
+      dateStyle: "short",
+      timeStyle: "short"
+    });
+  }
+
+  function yorumKartiniEkle(yorum) {
+    const kart = document.createElement("article");
+    kart.className = "yorum-kart";
+
+    const ust = document.createElement("div");
+    ust.className = "yorum-ust";
+
+    const isim = document.createElement("span");
+    isim.className = "yorum-isim";
+    isim.textContent = yorum.name;
+
+    const tarih = document.createElement("time");
+    tarih.className = "yorum-tarih";
+    tarih.textContent = tarihFormatla(yorum.created_at);
+
+    const metin = document.createElement("p");
+    metin.className = "yorum-metni";
+    metin.textContent = yorum.comment;
+
+    ust.append(isim, tarih);
+    kart.append(ust, metin);
+
+    return kart;
+  }
+
+  async function yorumlariYukle(istemci, filmId) {
+    yorumListesi.replaceChildren();
+
+    const { data, error } = await istemci
+      .from("movie_comments")
+      .select("id,movie_id,name,comment,created_at")
+      .eq("movie_id", String(filmId))
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Yorumları yükleme hatası:", error);
+
+      const hata = document.createElement("p");
+      hata.className = "durum";
+      hata.textContent =
+        "Yorumlar yüklenemedi. Supabase yorum tablosunu ve izinlerini kontrol et.";
+      yorumListesi.append(hata);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      const bos = document.createElement("p");
+      bos.className = "durum";
+      bos.textContent = "Henüz yorum yok. İlk yorumu sen yaz!";
+      yorumListesi.append(bos);
+      return;
+    }
+
+    const parca = document.createDocumentFragment();
+
+    data.forEach(function (yorum) {
+      parca.append(yorumKartiniEkle(yorum));
+    });
+
+    yorumListesi.append(parca);
   }
 
   try {
@@ -276,7 +519,6 @@ a {
     baslik.textContent = film.title || "İsimsiz film";
 
     const detaylar = [];
-
     if (film.year) detaylar.push(String(film.year));
     if (film.genre) detaylar.push(film.genre);
 
@@ -304,30 +546,88 @@ a {
 
     if (videoId) {
       const iframe = document.createElement("iframe");
-
       iframe.src =
         "https://www.youtube-nocookie.com/embed/" +
         encodeURIComponent(videoId);
-
       iframe.title = (film.title || "Film") + " video oynatıcı";
       iframe.allow =
         "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
       iframe.allowFullscreen = true;
       iframe.referrerPolicy = "strict-origin-when-cross-origin";
-
       videoKapsayici.replaceChildren(iframe);
     } else {
       const mesaj = document.createElement("p");
       mesaj.className = "durum";
       mesaj.textContent =
         "Geçerli bir YouTube bağlantısı bulunamadı. Yönetim panelinden film bağlantısını kontrol et.";
-
       videoKapsayici.replaceChildren(mesaj);
     }
 
     durum.hidden = true;
     icerik.hidden = false;
     document.title = (film.title || "Film İzle") + " | BengüşFlix";
+
+    // Yorumları getir
+    await yorumlariYukle(istemci, film.id);
+
+    // Yorum gönderilince doğrudan yayınla
+    yorumForm.addEventListener("submit", async function (olay) {
+      olay.preventDefault();
+
+      const isim = yorumIsim.value.trim();
+      const yorum = yorumMetni.value.trim();
+
+      if (!isim || !yorum) {
+        mesajGoster("Lütfen isim ve yorum alanlarını doldur.", true);
+        return;
+      }
+
+      if (isim.length > 60 || yorum.length > 1000) {
+        mesajGoster("İsim en fazla 60, yorum en fazla 1000 karakter olabilir.", true);
+        return;
+      }
+
+      yorumGonder.disabled = true;
+      yorumGonder.textContent = "Yayınlanıyor...";
+      mesajGoster("");
+
+      try {
+        const { data, error } = await istemci
+          .from("movie_comments")
+          .insert({
+            movie_id: String(film.id),
+            name: isim,
+            comment: yorum
+          })
+          .select("id,movie_id,name,comment,created_at")
+          .single();
+
+        if (error) throw error;
+
+        // Yeni yorumu liste başına hemen ekle
+        const bosMesaj = yorumListesi.querySelector(".durum");
+        if (
+          bosMesaj &&
+          bosMesaj.textContent.includes("Henüz yorum yok")
+        ) {
+          yorumListesi.replaceChildren();
+        }
+
+        yorumListesi.prepend(yorumKartiniEkle(data));
+        yorumMetni.value = "";
+        mesajGoster("Yorumun yayınlandı!");
+
+      } catch (hata) {
+        console.error("Yorum gönderme hatası:", hata);
+        mesajGoster(
+          "Yorum yayınlanamadı. Supabase tablo ve izin ayarlarını kontrol et.",
+          true
+        );
+      } finally {
+        yorumGonder.disabled = false;
+        yorumGonder.textContent = "Yorumu yayınla";
+      }
+    });
 
   } catch (hata) {
     console.error("Film görüntüleme hatası:", hata);
