@@ -9,199 +9,107 @@
 
 <style>
 :root {
-  --arka: #101014;
-  --kart: #1b1b23;
-  --kirmizi: #e74752;
-  --yazi: #f6f6f8;
-  --soluk: #aaaab6;
+  --arka:#101014;
+  --kart:#1b1b23;
+  --kirmizi:#e74752;
+  --yazi:#f6f6f8;
+  --soluk:#aaaab6;
 }
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  background: var(--arka);
-  color: var(--yazi);
-  font-family: Arial, Helvetica, sans-serif;
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--arka);color:var(--yazi);
+  font-family:Arial,Helvetica,sans-serif
 }
-a { color: inherit; text-decoration: none; }
-button, input { font: inherit; }
-
-.ust-menu {
-  background: #17171d;
-  border-bottom: 1px solid #292932;
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+.ust-menu{background:#17171d;border-bottom:1px solid #292932}
+.menu-icerik{
+  max-width:1200px;margin:auto;padding:20px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px
 }
-.menu-icerik {
-  max-width: 1200px;
-  margin: auto;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+.logo{font-size:26px;font-weight:900}
+.logo span{color:var(--kirmizi)}
+.menu-baglantilari{
+  display:flex;align-items:center;flex-wrap:wrap;
+  gap:22px;color:#ddd;font-size:14px
 }
-.logo { font-size: 26px; font-weight: 900; }
-.logo span { color: var(--kirmizi); }
-.menu-baglantilari {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 22px;
-  color: #ddd;
-  font-size: 14px;
+.menu-baglantilari a:hover{color:var(--kirmizi)}
+.karsilama{
+  padding:75px 20px;
+  background:radial-gradient(ellipse at 80% 20%,#48222b 0,transparent 45%),
+  linear-gradient(120deg,#191920,#101014)
 }
-.menu-baglantilari a:hover { color: var(--kirmizi); }
-
-.karsilama {
-  padding: 75px 20px;
-  background:
-    radial-gradient(ellipse at 80% 20%, #48222b 0, transparent 45%),
-    linear-gradient(120deg, #191920, #101014);
+.karsilama-icerik{max-width:1160px;margin:auto}
+.kucuk-baslik{
+  color:var(--kirmizi);text-transform:uppercase;
+  letter-spacing:3px;font-size:12px;font-weight:bold
 }
-.karsilama-icerik { max-width: 1160px; margin: auto; }
-.kucuk-baslik {
-  color: var(--kirmizi);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  font-size: 12px;
-  font-weight: bold;
+.karsilama h1{
+  max-width:700px;font-size:clamp(36px,6vw,64px);
+  line-height:1.08;margin:18px 0
 }
-.karsilama h1 {
-  max-width: 700px;
-  font-size: clamp(36px, 6vw, 64px);
-  line-height: 1.08;
-  margin: 18px 0;
+.karsilama h1 span{color:var(--kirmizi)}
+.karsilama p{color:#c1c1cb;max-width:570px;line-height:1.8}
+.dugme{
+  display:inline-block;margin-top:16px;background:var(--kirmizi);
+  color:white;padding:13px 20px;border-radius:6px;font-weight:bold
 }
-.karsilama h1 span { color: var(--kirmizi); }
-.karsilama p {
-  color: #c1c1cb;
-  max-width: 570px;
-  line-height: 1.8;
+.dugme:hover{background:#c93642}
+.ana-icerik{max-width:1200px;padding:38px 20px 60px;margin:auto}
+.bolum-basligi{font-size:24px;margin:0 0 10px}
+.bolum-aciklama{
+  color:var(--soluk);font-size:14px;line-height:1.7;margin-bottom:25px
 }
-.dugme {
-  display: inline-block;
-  margin-top: 16px;
-  background: var(--kirmizi);
-  color: white;
-  padding: 13px 20px;
-  border-radius: 6px;
-  font-weight: bold;
+.arama-alani{margin-bottom:25px}
+.arama{
+  width:100%;max-width:440px;padding:13px 15px;color:white;
+  background:#1b1b23;border:1px solid #373741;border-radius:7px;outline:none
 }
-.dugme:hover { background: #c93642; }
-
-.ana-icerik {
-  max-width: 1200px;
-  padding: 38px 20px 60px;
-  margin: auto;
+.arama:focus{border-color:var(--kirmizi)}
+.film-listesi{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:22px
 }
-.bolum-basligi {
-  font-size: 24px;
-  margin: 0 0 10px;
+.film-karti{
+  overflow:hidden;background:var(--kart);border:1px solid #292932;
+  border-radius:10px;transition:transform .2s,border-color .2s
 }
-.bolum-aciklama {
-  color: var(--soluk);
-  font-size: 14px;
-  line-height: 1.7;
-  margin-bottom: 25px;
+.film-karti.tiklanabilir{cursor:pointer}
+.film-karti:hover{transform:translateY(-4px);border-color:var(--kirmizi)}
+.film-afis{
+  width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#282832
 }
-.arama-alani { margin-bottom: 25px; }
-.arama {
-  width: 100%;
-  max-width: 440px;
-  padding: 13px 15px;
-  color: white;
-  background: #1b1b23;
-  border: 1px solid #373741;
-  border-radius: 7px;
-  outline: none;
+.afis-yok{
+  aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;
+  padding:20px;text-align:center;background:linear-gradient(145deg,#343440,#17171d);
+  color:#dedee7;font-size:20px;font-weight:bold
 }
-.arama:focus { border-color: var(--kirmizi); }
-
-.film-listesi {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 22px;
+.film-bilgileri{padding:15px}
+.film-adi{font-size:17px;margin:0 0 10px}
+.film-detay{color:var(--soluk);font-size:12px;line-height:1.7}
+.film-aciklama{color:#d1d1da;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.film-baglantisi{
+  display:inline-block;color:#ff737c;font-size:13px;font-weight:bold;margin-top:8px
 }
-.film-karti {
-  overflow: hidden;
-  background: var(--kart);
-  border: 1px solid #292932;
-  border-radius: 10px;
-  transition: transform .2s, border-color .2s;
+.film-baglantisi:hover{text-decoration:underline}
+.durum{color:var(--soluk);padding:18px 0;line-height:1.7}
+.alt-bilgi{
+  border-top:1px solid #292932;padding:28px 20px;
+  color:var(--soluk);text-align:center;font-size:13px
 }
-.film-karti:hover {
-  transform: translateY(-4px);
-  border-color: #555563;
-}
-.film-afis {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  display: block;
-  background: #282832;
-}
-.afis-yok {
-  aspect-ratio: 2 / 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  text-align: center;
-  background: linear-gradient(145deg, #343440, #17171d);
-  color: #dedee7;
-  font-size: 20px;
-  font-weight: bold;
-}
-.film-bilgileri { padding: 15px; }
-.film-adi { font-size: 17px; margin: 0 0 10px; }
-.film-detay { color: var(--soluk); font-size: 12px; line-height: 1.7; }
-.film-aciklama {
-  color: #d1d1da;
-  font-size: 13px;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-.film-baglantisi {
-  display: inline-block;
-  color: #ff737c;
-  font-size: 13px;
-  font-weight: bold;
-  margin-top: 8px;
-}
-.durum {
-  color: var(--soluk);
-  padding: 18px 0;
-  line-height: 1.7;
-}
-.ornek-etiketi {
-  display: inline-block;
-  margin-bottom: 10px;
-  color: #ffc46b;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.alt-bilgi {
-  border-top: 1px solid #292932;
-  padding: 28px 20px;
-  color: var(--soluk);
-  text-align: center;
-  font-size: 13px;
-}
-.gizli { display: none !important; }
-
-@media (max-width: 600px) {
-  .menu-icerik { align-items: flex-start; flex-direction: column; }
-  .menu-baglantilari { gap: 16px; }
-  .karsilama { padding: 55px 20px; }
-  .film-listesi { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .film-bilgileri { padding: 11px; }
-  .film-adi { font-size: 15px; }
+.gizli{display:none!important}
+@media(max-width:600px){
+  .menu-icerik{align-items:flex-start;flex-direction:column}
+  .menu-baglantilari{gap:16px}
+  .karsilama{padding:55px 20px}
+  .film-listesi{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .film-bilgileri{padding:11px}
+  .film-adi{font-size:15px}
 }
 </style>
 </head>
 
 <body>
-
 <header class="ust-menu">
   <div class="menu-icerik">
     <a class="logo" href="#anasayfa">FİLM<span>ARŞİVİ</span></a>
@@ -218,174 +126,162 @@ button, input { font: inherit; }
   <div class="karsilama-icerik">
     <div class="kucuk-baslik">Kişisel film koleksiyonun</div>
     <h1>İzlenecek yeni bir <span>hikâye</span> keşfet.</h1>
-    <p>
-      Film arşivini tek bir yerde topla. Eklediğin filmleri görüntüle,
-      ara ve film bilgilerine kolayca ulaş.
-    </p>
+    <p>Film arşivini tek bir yerde topla. Eklediğin filmleri görüntüle,
+    ara ve film bilgilerine kolayca ulaş.</p>
     <a class="dugme" href="#filmler">Filmleri Gör</a>
   </div>
 </section>
 
 <main class="ana-icerik" id="filmler">
   <h2 class="bolum-basligi">Film Koleksiyonu</h2>
-  <p class="bolum-aciklama">
-    Örnek kart tasarımı ve veritabanına kaydettiğin filmler burada gösterilir.
-  </p>
+  <p class="bolum-aciklama">Kayıtlı filmlerine afişten veya film kartından tıklayarak ulaşabilirsin.</p>
 
   <div class="arama-alani">
-    <input
-      class="arama"
-      id="film-arama"
-      type="search"
-      placeholder="Film adına göre ara..."
-      aria-label="Film adına göre ara"
-    >
+    <input class="arama" id="film-arama" type="search"
+      placeholder="Film adına göre ara..." aria-label="Film adına göre ara">
   </div>
 
-  <div class="film-listesi" id="ornek-film-listesi">
-    <article class="film-karti" data-film-adi="örnek film">
-      <div class="afis-yok">Örnek Film</div>
-      <div class="film-bilgileri">
-        <span class="ornek-etiketi">Tasarım kontrolü</span>
-        <h3 class="film-adi">Örnek Film</h3>
-        <div class="film-detay">2026 · Deneme</div>
-        <p class="film-aciklama">
-          Bu kart yalnızca sayfa tasarımını kontrol etmek için eklenmiştir.
-          Gerçek bir veritabanı kaydı değildir.
-        </p>
-      </div>
-    </article>
-  </div>
-
-  <div style="margin-top:42px">
-    <h2 class="bolum-basligi">Kayıtlı Filmler</h2>
-    <p class="bolum-aciklama">
-      Supabase veritabanındaki filmler otomatik olarak yüklenir.
-    </p>
-    <p class="durum" id="film-durumu">Veritabanına bağlanılıyor...</p>
-    <div class="film-listesi" id="veritabani-filmleri"></div>
-  </div>
+  <p class="durum" id="film-durumu">Filmler yükleniyor...</p>
+  <div class="film-listesi" id="veritabani-filmleri"></div>
 </main>
 
 <section class="ana-icerik" id="hakkinda">
   <h2 class="bolum-basligi">Hakkında</h2>
-  <p class="bolum-aciklama">
-    Bu site kişisel film arşividir. Yeni film eklemek ve kayıtları
-    yönetmek için yönetim panelini kullanabilirsin.
-  </p>
+  <p class="bolum-aciklama">Bu site kişisel film arşividir. Yeni film eklemek ve kayıtları yönetmek için yönetim panelini kullanabilirsin.</p>
   <a class="dugme" href="./admin.html">Yönetim Panelini Aç</a>
 </section>
 
-<footer class="alt-bilgi">
-  © 2026 Film Arşivim · Kişisel film koleksiyonun
-</footer>
+<footer class="alt-bilgi">© 2026 Film Arşivim · Kişisel film koleksiyonun</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase-config.js"></script>
-
 <script>
-(async function () {
-  const durum = document.getElementById("film-durumu");
-  const liste = document.getElementById("veritabani-filmleri");
-  const arama = document.getElementById("film-arama");
+(async function(){
+  const durum=document.getElementById("film-durumu");
+  const liste=document.getElementById("veritabani-filmleri");
+  const arama=document.getElementById("film-arama");
 
-  function eleman(etiket, sinif, metin) {
-    const e = document.createElement(etiket);
-    if (sinif) e.className = sinif;
-    if (metin !== undefined) e.textContent = metin;
+  function eleman(tag,sinif,metin){
+    const e=document.createElement(tag);
+    if(sinif)e.className=sinif;
+    if(metin!==undefined)e.textContent=metin;
     return e;
   }
 
-  function filmKarti(film) {
-    const kart = eleman("article", "film-karti");
-    kart.dataset.filmAdi = (film.title || "").toLocaleLowerCase("tr-TR");
+  function youtubeAdresi(deger){
+    if(!deger)return "";
+    try{
+      const url=new URL(deger.trim());
+      const host=url.hostname.toLowerCase().replace(/^www\./,"");
+      if(host==="youtu.be"){
+        const id=url.pathname.split("/").filter(Boolean)[0];
+        return id ? "https://www.youtube.com/watch?v="+encodeURIComponent(id) : "";
+      }
+      if(host==="youtube.com"||host==="m.youtube.com"||host==="music.youtube.com"){
+        if(url.pathname==="/watch"&&url.searchParams.get("v"))
+          return "https://www.youtube.com/watch?v="+encodeURIComponent(url.searchParams.get("v"));
+        if(/^\/(embed|shorts)\/[^/]+/.test(url.pathname))
+          return "https://www.youtube.com"+url.pathname;
+      }
+    }catch(e){}
+    return "";
+  }
 
-    if (film.poster) {
-      const afis = eleman("img", "film-afis");
-      afis.src = film.poster;
-      afis.alt = (film.title || "Film") + " afişi";
-      afis.loading = "lazy";
-      afis.onerror = function () {
-        const yedek = eleman("div", "afis-yok", film.title || "Film");
-        afis.replaceWith(yedek);
+  function filmKarti(film){
+    const kart=eleman("article","film-karti");
+    kart.dataset.filmAdi=(film.title||"").toLocaleLowerCase("tr-TR");
+
+    const hedef=youtubeAdresi(film.youtube);
+    if(hedef){
+      kart.classList.add("tiklanabilir");
+      kart.tabIndex=0;
+      kart.setAttribute("role","link");
+      kart.setAttribute("aria-label",(film.title||"Film")+" filmini YouTube'da aç");
+      kart.addEventListener("click",function(event){
+        if(event.target.closest("a"))return;
+        window.open(hedef,"_blank","noopener,noreferrer");
+      });
+      kart.addEventListener("keydown",function(event){
+        if(event.key==="Enter"||event.key===" "){
+          event.preventDefault();
+          window.open(hedef,"_blank","noopener,noreferrer");
+        }
+      });
+    }
+
+    if(film.poster){
+      const afis=eleman("img","film-afis");
+      afis.src=film.poster;
+      afis.alt=(film.title||"Film")+" afişi";
+      afis.loading="lazy";
+      afis.onerror=function(){
+        afis.replaceWith(eleman("div","afis-yok",film.title||"Film"));
       };
       kart.appendChild(afis);
-    } else {
-      kart.appendChild(eleman("div", "afis-yok", film.title || "Film"));
+    }else{
+      kart.appendChild(eleman("div","afis-yok",film.title||"Film"));
     }
 
-    const bilgiler = eleman("div", "film-bilgileri");
-    bilgiler.appendChild(eleman("h3", "film-adi", film.title || "İsimsiz film"));
+    const bilgiler=eleman("div","film-bilgileri");
+    bilgiler.appendChild(eleman("h3","film-adi",film.title||"İsimsiz film"));
 
-    const detaylar = [];
-    if (film.year) detaylar.push(String(film.year));
-    if (film.genre) detaylar.push(film.genre);
-    if (film.rating !== null && film.rating !== undefined && film.rating !== "") {
-      detaylar.push("★ " + film.rating);
-    }
+    const detaylar=[];
+    if(film.year)detaylar.push(String(film.year));
+    if(film.genre)detaylar.push(film.genre);
+    if(film.rating!==null&&film.rating!==undefined&&film.rating!=="")
+      detaylar.push("★ "+film.rating);
+    if(detaylar.length)
+      bilgiler.appendChild(eleman("div","film-detay",detaylar.join(" · ")));
 
-    if (detaylar.length) {
-      bilgiler.appendChild(eleman("div", "film-detay", detaylar.join(" · ")));
-    }
+    if(film.description)
+      bilgiler.appendChild(eleman("p","film-aciklama",film.description));
 
-    if (film.description) {
-      bilgiler.appendChild(eleman("p", "film-aciklama", film.description));
-    }
-
-    if (film.youtube) {
-      const baglanti = eleman("a", "film-baglantisi", "YouTube'da Aç");
-      baglanti.href = film.youtube;
-      baglanti.target = "_blank";
-      baglanti.rel = "noopener noreferrer";
+    if(hedef){
+      const baglanti=eleman("a","film-baglantisi","YouTube'da Aç ↗");
+      baglanti.href=hedef;
+      baglanti.target="_blank";
+      baglanti.rel="noopener noreferrer";
       bilgiler.appendChild(baglanti);
+    }else{
+      bilgiler.appendChild(eleman("div","film-detay","YouTube bağlantısı eklenmemiş."));
     }
 
     kart.appendChild(bilgiler);
     return kart;
   }
 
-  try {
-    if (!window.supabase || !window.SUPABASE_URL ||
-        !window.SUPABASE_PUBLISHABLE_KEY) {
-      throw new Error("Supabase ayarları bulunamadı. Bağlantı dosyasını kontrol et.");
-    }
+  try{
+    if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_PUBLISHABLE_KEY)
+      throw new Error("Supabase ayarları bulunamadı. supabase-config.js dosyasını kontrol et.");
 
-    const istemci = window.supabase.createClient(
-      window.SUPABASE_URL,
-      window.SUPABASE_PUBLISHABLE_KEY
+    const istemci=window.supabase.createClient(
+      window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY
     );
-
-    const sonuc = await istemci
-      .from("movies")
+    const sonuc=await istemci.from("movies")
       .select("id,title,youtube,genre,year,rating,poster,description,created_at")
-      .order("created_at", { ascending: false });
+      .order("created_at",{ascending:false});
 
-    if (sonuc.error) throw sonuc.error;
+    if(sonuc.error)throw sonuc.error;
 
     liste.replaceChildren();
-
-    if (!sonuc.data || sonuc.data.length === 0) {
-      durum.textContent = "Veritabanında henüz kayıtlı film yok.";
-    } else {
-      durum.textContent = sonuc.data.length + " film başarıyla yüklendi.";
-      sonuc.data.forEach(function (film) {
-        liste.appendChild(filmKarti(film));
-      });
+    if(!sonuc.data||sonuc.data.length===0){
+      durum.textContent="Veritabanında henüz kayıtlı film yok.";
+    }else{
+      durum.textContent=sonuc.data.length+" film başarıyla yüklendi.";
+      sonuc.data.forEach(film=>liste.appendChild(filmKarti(film)));
     }
-  } catch (hata) {
-    console.error("Film yükleme hatası:", hata);
-    durum.textContent = "Filmler yüklenemedi: " + hata.message;
+  }catch(hata){
+    console.error("Film yükleme hatası:",hata);
+    durum.textContent="Filmler yüklenemedi: "+hata.message;
   }
 
-  arama.addEventListener("input", function () {
-    const kelime = arama.value.trim().toLocaleLowerCase("tr-TR");
-    document.querySelectorAll(".film-karti").forEach(function (kart) {
-      const ad = kart.dataset.filmAdi || "";
-      kart.classList.toggle("gizli", !ad.includes(kelime));
+  arama.addEventListener("input",function(){
+    const kelime=arama.value.trim().toLocaleLowerCase("tr-TR");
+    liste.querySelectorAll(".film-karti").forEach(function(kart){
+      kart.classList.toggle("gizli",!kart.dataset.filmAdi.includes(kelime));
     });
   });
 })();
 </script>
-
 </body>
 </html>
