@@ -114,7 +114,6 @@ a { color: inherit; text-decoration: none; }
   margin-top: 25px;
 }
 
-/* Yorum alanı */
 .yorum-bolumu {
   margin-top: 35px;
   padding-top: 28px;
@@ -190,7 +189,7 @@ a { color: inherit; text-decoration: none; }
 .yorum-gonder:hover { background: #ce3540; }
 
 .yorum-gonder:disabled {
-  opacity: 0.6;
+  opacity: .6;
   cursor: not-allowed;
 }
 
@@ -295,10 +294,11 @@ a { color: inherit; text-decoration: none; }
 
     <p class="aciklama" id="film-aciklama"></p>
 
-    <!-- Yorum alanı -->
     <section class="yorum-bolumu" aria-labelledby="yorum-baslik">
       <h2 class="yorum-baslik" id="yorum-baslik">Yorumlar</h2>
-      <p class="yorum-alt-baslik">Film hakkındaki düşünceni paylaş.</p>
+      <p class="yorum-alt-baslik">
+        Film hakkındaki düşünceni paylaş.
+      </p>
 
       <form class="yorum-form" id="yorum-form">
         <div class="form-alan">
@@ -329,7 +329,8 @@ a { color: inherit; text-decoration: none; }
           Yorumu yayınla
         </button>
 
-        <p class="yorum-mesaj" id="yorum-mesaj" role="status" aria-live="polite"></p>
+        <p class="yorum-mesaj" id="yorum-mesaj"
+           role="status" aria-live="polite"></p>
       </form>
 
       <div class="yorum-listesi" id="yorum-listesi">
@@ -369,32 +370,58 @@ a { color: inherit; text-decoration: none; }
     icerik.hidden = true;
   }
 
-  function youtubeVideoId(adres) {
+  // YouTube ve Mail.ru bağlantılarını tanır.
+  function videoBilgisi(adres) {
     if (!adres) return null;
 
     try {
       const url = new URL(adres);
       const host = url.hostname.toLowerCase().replace(/^www\./, "");
+
+      // Mail.ru yalnızca gömme bağlantısı kabul edilir.
+      if (
+        host === "my.mail.ru" &&
+        /^\/video\/embed\/[0-9]+\/?$/.test(url.pathname)
+      ) {
+        return {
+          tur: "mailru",
+          adres: url.href
+        };
+      }
+
+      // YouTube bağlantıları
       let id = "";
 
       if (host === "youtu.be") {
         id = url.pathname.split("/").filter(Boolean)[0] || "";
       } else if (
-        host === "youtube.com" ||
-        host === "m.youtube.com" ||
-        host === "youtube-nocookie.com"
+        [
+          "youtube.com",
+          "m.youtube.com",
+          "youtube-nocookie.com"
+        ].includes(host)
       ) {
         if (url.pathname === "/watch") {
           id = url.searchParams.get("v") || "";
         } else {
           const parcalar = url.pathname.split("/").filter(Boolean);
+
           if (["embed", "shorts", "live"].includes(parcalar[0])) {
             id = parcalar[1] || "";
           }
         }
       }
 
-      return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null;
+      if (/^[A-Za-z0-9_-]{11}$/.test(id)) {
+        return {
+          tur: "youtube",
+          adres:
+            "https://www.youtube-nocookie.com/embed/" +
+            encodeURIComponent(id)
+        };
+      }
+
+      return null;
     } catch (_) {
       return null;
     }
@@ -409,6 +436,7 @@ a { color: inherit; text-decoration: none; }
     if (!tarih) return "";
 
     const tarihNesnesi = new Date(tarih);
+
     if (Number.isNaN(tarihNesnesi.getTime())) return "";
 
     return tarihNesnesi.toLocaleString("tr-TR", {
@@ -452,12 +480,13 @@ a { color: inherit; text-decoration: none; }
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Yorumları yükleme hatası:", error);
+      console.error("Yorum yükleme hatası:", error);
 
       const hata = document.createElement("p");
       hata.className = "durum";
       hata.textContent =
-        "Yorumlar yüklenemedi. Supabase yorum tablosunu ve izinlerini kontrol et.";
+        "Yorumlar yüklenemedi. Supabase tablo ve izinlerini kontrol et.";
+
       yorumListesi.append(hata);
       return;
     }
@@ -519,6 +548,7 @@ a { color: inherit; text-decoration: none; }
     baslik.textContent = film.title || "İsimsiz film";
 
     const detaylar = [];
+
     if (film.year) detaylar.push(String(film.year));
     if (film.genre) detaylar.push(film.genre);
 
@@ -542,24 +572,25 @@ a { color: inherit; text-decoration: none; }
       };
     }
 
-    const videoId = youtubeVideoId(film.youtube);
+    const video = videoBilgisi(film.youtube);
 
-    if (videoId) {
+    if (video) {
       const iframe = document.createElement("iframe");
-      iframe.src =
-        "https://www.youtube-nocookie.com/embed/" +
-        encodeURIComponent(videoId);
+
+      iframe.src = video.adres;
       iframe.title = (film.title || "Film") + " video oynatıcı";
       iframe.allow =
         "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
       iframe.allowFullscreen = true;
       iframe.referrerPolicy = "strict-origin-when-cross-origin";
+
       videoKapsayici.replaceChildren(iframe);
     } else {
       const mesaj = document.createElement("p");
       mesaj.className = "durum";
       mesaj.textContent =
-        "Geçerli bir YouTube bağlantısı bulunamadı. Yönetim panelinden film bağlantısını kontrol et.";
+        "Geçerli YouTube veya Mail.ru gömme bağlantısı bulunamadı.";
+
       videoKapsayici.replaceChildren(mesaj);
     }
 
@@ -583,7 +614,10 @@ a { color: inherit; text-decoration: none; }
       }
 
       if (isim.length > 60 || yorum.length > 1000) {
-        mesajGoster("İsim en fazla 60, yorum en fazla 1000 karakter olabilir.", true);
+        mesajGoster(
+          "İsim en fazla 60, yorum en fazla 1000 karakter olabilir.",
+          true
+        );
         return;
       }
 
@@ -604,12 +638,9 @@ a { color: inherit; text-decoration: none; }
 
         if (error) throw error;
 
-        // Yeni yorumu liste başına hemen ekle
         const bosMesaj = yorumListesi.querySelector(".durum");
-        if (
-          bosMesaj &&
-          bosMesaj.textContent.includes("Henüz yorum yok")
-        ) {
+
+        if (bosMesaj) {
           yorumListesi.replaceChildren();
         }
 
@@ -619,8 +650,9 @@ a { color: inherit; text-decoration: none; }
 
       } catch (hata) {
         console.error("Yorum gönderme hatası:", hata);
+
         mesajGoster(
-          "Yorum yayınlanamadı. Supabase tablo ve izin ayarlarını kontrol et.",
+          "Yorum yayınlanamadı. Supabase tablo ve izinlerini kontrol et.",
           true
         );
       } finally {
