@@ -12,6 +12,8 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--arka);color:var(--yazi);font-family:Arial,Helvetica,sans-serif}
 a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #ff8991;outline-offset:2px}
 .ust-menu{background:#17171d;border-bottom:1px solid #292932}
 .menu-icerik{max-width:1100px;margin:auto;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .logo{display:inline-block;color:#f6f6f8!important;font-size:25px;font-weight:900;line-height:1.3;white-space:nowrap}
@@ -27,9 +29,9 @@ a{color:inherit;text-decoration:none}
 .afis{width:150px;max-width:40%;border-radius:8px;margin-top:25px}
 
 /* Canlı sohbet */
-.chat-bolumu{margin-top:35px;padding-top:28px;border-top:1px solid #292932}
-.chat-baslik{font-size:25px;margin:0 0 8px}
-.chat-alt{color:var(--soluk);font-size:14px;line-height:1.6;margin:0 0 18px}
+.chat-bolumu,.yorum-bolumu{margin-top:35px;padding-top:28px;border-top:1px solid #292932}
+.chat-baslik,.yorum-baslik{font-size:25px;margin:0 0 8px}
+.chat-alt,.yorum-alt-baslik{color:var(--soluk);font-size:14px;line-height:1.7;margin:0 0 18px}
 .chat-panel{background:var(--kart);border:1px solid #30303a;border-radius:12px;overflow:hidden}
 .chat-ust{padding:14px 16px;background:#17171d;border-bottom:1px solid #30303a;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .chat-oda{font-size:14px;font-weight:bold}
@@ -45,28 +47,42 @@ a{color:inherit;text-decoration:none}
 .chat-mesaj-kendi .chat-isim{color:#ffc0c5}
 .chat-saat{font-size:11px;color:var(--soluk)}
 .chat-mesaj-yazi{margin:0;color:#f0f0f5;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.chat-gif{display:block;width:min(260px,100%);max-height:220px;object-fit:contain;border-radius:8px;background:#111116}
 .chat-form{padding:14px;border-top:1px solid #30303a}
-.chat-alan{display:block;width:100%;padding:12px 13px;color:var(--yazi);background:#111116;border:1px solid #393943;border-radius:8px;font:inherit;outline:none;margin-bottom:10px}
+.chat-label{display:block;font-size:14px;font-weight:bold;margin-bottom:8px}
+.chat-alan{display:block;width:100%;padding:12px 13px;color:var(--yazi);background:#111116;border:1px solid #393943;border-radius:8px;outline:none;margin-bottom:12px}
 .chat-alan:focus{border-color:var(--kirmizi)}
 .chat-mesaj-giris{resize:vertical;min-height:70px;max-height:150px}
 .chat-alt-form{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .chat-karakter{font-size:12px;color:var(--soluk)}
-.chat-gonder,.yorum-gonder{display:inline-block;padding:12px 22px;background:var(--kirmizi);color:white;border:0;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
+.chat-gonder,.yorum-gonder{display:inline-block;padding:12px 20px;background:var(--kirmizi);color:white;border:0;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
 .chat-gonder:hover,.yorum-gonder:hover{background:#ce3540}
 .chat-gonder:disabled,.yorum-gonder:disabled{opacity:.6;cursor:not-allowed}
-.chat-bilgi{color:var(--soluk);font-size:13px;line-height:1.6;margin:10px 0 0}
+.chat-bilgi,.yorum-mesaj{color:var(--soluk);font-size:13px;line-height:1.6;margin:10px 0 0}
 .chat-bilgi.hata{color:#ff737c}
-.yorum-bolumu{margin-top:35px;padding-top:28px;border-top:1px solid #292932}
-.yorum-baslik{font-size:25px;margin:0 0 8px}
-.yorum-alt-baslik{color:var(--soluk);font-size:14px;margin:0 0 22px}
+
+/* Emoji ve GIF araçları */
+.chat-araclar{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 12px}
+.chat-arac{background:#292933;border:1px solid #41414d;color:#f6f6f8;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:14px}
+.chat-arac:hover,.chat-arac[aria-expanded="true"]{background:#40303a;border-color:#e74752}
+.secici{background:#141419;border:1px solid #393943;border-radius:10px;padding:12px;margin-bottom:12px}
+.secici[hidden]{display:none}
+.secici-baslik{font-weight:bold;font-size:14px;margin:0 0 10px}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
+.emoji-sec{padding:8px 0;border:0;border-radius:7px;background:#25252e;cursor:pointer;font-size:23px}
+.emoji-sec:hover{background:#49303a}
+.gif-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.gif-sec{padding:5px;background:#25252e;border:1px solid #393943;border-radius:8px;cursor:pointer;color:white;min-width:0}
+.gif-sec:hover{border-color:var(--kirmizi)}
+.gif-sec img{display:block;width:100%;height:88px;object-fit:cover;border-radius:5px;background:#111116}
+.gif-sec span{display:block;font-size:12px;margin-top:6px;overflow-wrap:anywhere}
+.gif-not{font-size:12px;line-height:1.6;color:var(--soluk);margin:10px 0 0}
 .yorum-form{background:var(--kart);border:1px solid #30303a;border-radius:12px;padding:18px;margin-bottom:25px}
 .form-alan{display:block;width:100%;margin-bottom:14px}
 .form-alan label{display:block;margin-bottom:8px;font-size:14px;font-weight:bold}
 .form-alan input,.form-alan textarea{width:100%;padding:13px 14px;color:var(--yazi);background:#111116;border:1px solid #393943;border-radius:8px;font:inherit;outline:none}
 .form-alan input:focus,.form-alan textarea:focus{border-color:var(--kirmizi)}
 .form-alan textarea{min-height:110px;resize:vertical}
-.yorum-gonder:hover{background:#ce3540}
-.yorum-mesaj{color:var(--soluk);font-size:14px;line-height:1.6;margin-top:12px}
 .yorum-listesi{display:grid;gap:14px}
 .yorum-kart{background:var(--kart);border:1px solid #292932;border-radius:10px;padding:17px;overflow-wrap:anywhere}
 .yorum-ust{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
@@ -76,15 +92,17 @@ a{color:inherit;text-decoration:none}
 .alt-bilgi{border-top:1px solid #292932;padding:25px 20px;text-align:center;color:var(--soluk);font-size:13px}
 
 @media(max-width:600px){
-.menu-icerik{align-items:flex-start;flex-direction:column}
-.ana-icerik{padding:22px 14px 40px}
-.video-kapsayici{border-radius:7px}
-.yorum-form{padding:14px}
-.yorum-ust{align-items:flex-start;flex-direction:column;gap:6px}
-.chat-mesajlar{height:320px;padding:11px}
-.chat-mesaj{max-width:96%}
-.chat-form{padding:11px}
-.chat-gonder{padding:12px 17px}
+ .menu-icerik{align-items:flex-start;flex-direction:column}
+ .ana-icerik{padding:22px 14px 40px}
+ .video-kapsayici{border-radius:7px}
+ .yorum-form{padding:14px}
+ .yorum-ust{align-items:flex-start;flex-direction:column;gap:6px}
+ .chat-mesajlar{height:320px;padding:11px}
+ .chat-mesaj{max-width:96%}
+ .chat-form{padding:11px}
+ .emoji-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+ .gif-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .gif-sec img{height:95px}
 }
 </style>
 </head>
@@ -107,12 +125,9 @@ a{color:inherit;text-decoration:none}
     <img class="afis" id="film-afis" alt="Film afişi" hidden>
     <p class="aciklama" id="film-aciklama"></p>
 
-    <!-- Film bazlı canlı sohbet -->
     <section class="chat-bolumu" aria-labelledby="chat-baslik">
       <h2 class="chat-baslik" id="chat-baslik">Canlı Sohbet 💬</h2>
-      <p class="chat-alt">
-        Bu filmi izleyenlerle sohbet et. Takma adınla katıl, mesajların canlı olarak görünsün.
-      </p>
+      <p class="chat-alt">Bu filmi izleyenlerle takma adınla sohbet et.</p>
 
       <div class="chat-panel">
         <div class="chat-ust">
@@ -123,23 +138,37 @@ a{color:inherit;text-decoration:none}
           </span>
         </div>
 
-        <div class="chat-mesajlar" id="chat-mesajlar" aria-live="polite" aria-label="Canlı sohbet mesajları">
+        <div class="chat-mesajlar" id="chat-mesajlar" aria-live="polite">
           <p class="chat-bos">Sohbet yükleniyor...</p>
         </div>
 
         <form class="chat-form" id="chat-form">
-          <label for="chat-isim" class="form-alan">
-            <span style="display:block;margin-bottom:8px;font-size:14px;font-weight:bold">Takma adın</span>
-            <input class="chat-alan" id="chat-isim" type="text"
-              maxlength="30" placeholder="Sohbette görünecek adın"
-              autocomplete="nickname" required>
-          </label>
+          <label class="chat-label" for="chat-isim">Takma adın</label>
+          <input class="chat-alan" id="chat-isim" type="text"
+            maxlength="30" placeholder="Sohbette görünecek adın"
+            autocomplete="nickname" required>
 
-          <label for="chat-metin" class="form-alan">
-            <span style="display:block;margin-bottom:8px;font-size:14px;font-weight:bold">Mesajın</span>
-            <textarea class="chat-alan chat-mesaj-giris" id="chat-metin"
-              maxlength="500" placeholder="Bir mesaj yaz..." required></textarea>
-          </label>
+          <div class="chat-araclar">
+            <button class="chat-arac" id="emoji-toggle" type="button"
+              aria-expanded="false" aria-controls="emoji-panel">😀 Emoji</button>
+            <button class="chat-arac" id="gif-toggle" type="button"
+              aria-expanded="false" aria-controls="gif-panel">🎞️ GIF seç</button>
+          </div>
+
+          <div class="secici" id="emoji-panel" hidden>
+            <p class="secici-baslik">Bir emoji seç</p>
+            <div class="emoji-grid" id="emoji-grid"></div>
+          </div>
+
+          <div class="secici" id="gif-panel" hidden>
+            <p class="secici-baslik">Hazır GIF koleksiyonu</p>
+            <div class="gif-grid" id="gif-grid"></div>
+            <p class="gif-not">GIF'ler harici bir kaynaktan yüklenir. Kaynak kaldırılırsa bazı GIF'ler açılmayabilir.</p>
+          </div>
+
+          <label class="chat-label" for="chat-metin">Mesajın</label>
+          <textarea class="chat-alan chat-mesaj-giris" id="chat-metin"
+            maxlength="500" placeholder="Mesajını yaz veya emoji ekle..." required></textarea>
 
           <div class="chat-alt-form">
             <span class="chat-karakter"><span id="chat-karakter-sayi">0</span>/500</span>
@@ -150,7 +179,6 @@ a{color:inherit;text-decoration:none}
       </div>
     </section>
 
-    <!-- Mevcut yorum sistemi -->
     <section class="yorum-bolumu" aria-labelledby="yorum-baslik">
       <h2 class="yorum-baslik" id="yorum-baslik">Yorumlar</h2>
       <p class="yorum-alt-baslik">Film hakkındaki düşünceni paylaş.</p>
@@ -161,13 +189,11 @@ a{color:inherit;text-decoration:none}
           <input id="yorum-isim" name="name" type="text" maxlength="60"
             placeholder="İsmini yaz..." autocomplete="nickname" required>
         </div>
-
         <div class="form-alan">
           <label for="yorum-metni">Yorumun</label>
           <textarea id="yorum-metni" name="comment" maxlength="1000"
             placeholder="Bu film hakkında ne düşünüyorsun?" required></textarea>
         </div>
-
         <button class="yorum-gonder" id="yorum-gonder" type="submit">Yorumu yayınla</button>
         <p class="yorum-mesaj" id="yorum-mesaj" role="status" aria-live="polite"></p>
       </form>
@@ -207,12 +233,55 @@ a{color:inherit;text-decoration:none}
   const chatDurumYazi = $("chat-durum-yazi");
   const chatNokta = $("chat-nokta");
   const chatKarakterSayi = $("chat-karakter-sayi");
+  const emojiPanel = $("emoji-panel");
+  const gifPanel = $("gif-panel");
 
   let client = null;
   let chatKanali = null;
   let aktifFilmId = "";
   let sonGonderim = 0;
+  let seciliGif = null;
   const gorulenMesajlar = new Set();
+
+  const EMOJILER = [
+    "😀","😃","😄","😁","😆","😂","🤣","🥹",
+    "😊","😍","🥰","😘","😎","🤩","🥳","🤔",
+    "😴","😭","😱","😡","🤯","😅","🙃","😉",
+    "❤️","🧡","💛","💚","💙","💜","🖤","💔",
+    "🔥","👏","👍","👎","🙏","💯","✨","⭐",
+    "🍿","🎬","🎥","🎉","👀","🤝","💀","🤡"
+  ];
+
+  /*
+   * API anahtarı gerektirmeyen, önceden seçilmiş GIF'ler.
+   * Harici GIF kaynakları zamanla değişebilir.
+   */
+  const GIF_KOLEKSIYONU = [
+    {
+      ad:"Başparmak",
+      url:"https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif"
+    },
+    {
+      ad:"Şaşkınlık",
+      url:"https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
+    },
+    {
+      ad:"Tebrikler",
+      url:"https://media.giphy.com/media/g9582DNuQppxC/giphy.gif"
+    },
+    {
+      ad:"Kahkaha",
+      url:"https://media.giphy.com/media/l0ExayQDzrI2xOb8A/giphy.gif"
+    },
+    {
+      ad:"Dans",
+      url:"https://media.giphy.com/media/3o6Zt6D4oG5gkQqL7G/giphy.gif"
+    },
+    {
+      ad:"Alkış",
+      url:"https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif"
+    }
+  ];
 
   function hataGoster(mesaj){
     durum.hidden = false;
@@ -232,7 +301,6 @@ a{color:inherit;text-decoration:none}
 
   function videoBilgisi(adres){
     if(!adres || typeof adres !== "string") return null;
-
     const url = parseHttpUrl(adres.trim());
     if(!url) return null;
 
@@ -244,7 +312,6 @@ a{color:inherit;text-decoration:none}
     }
 
     let id = "";
-
     if(host === "youtu.be"){
       id = url.pathname.split("/").filter(Boolean)[0] || "";
     }else if([
@@ -267,7 +334,6 @@ a{color:inherit;text-decoration:none}
         adres:"https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id)
       };
     }
-
     return null;
   }
 
@@ -276,11 +342,6 @@ a{color:inherit;text-decoration:none}
     const d = new Date(tarih);
     if(Number.isNaN(d.getTime())) return "";
     return d.toLocaleString("tr-TR",{dateStyle:"short",timeStyle:"short"});
-  }
-
-  function mesajGoster(metin,hata=false){
-    yorumMesaj.textContent = metin;
-    yorumMesaj.style.color = hata ? "#ff737c" : "var(--soluk)";
   }
 
   function chatBilgiGoster(metin,hata=false){
@@ -304,7 +365,6 @@ a{color:inherit;text-decoration:none}
   function yorumKarti(yorum){
     const kart = document.createElement("article");
     kart.className = "yorum-kart";
-
     const ust = document.createElement("div");
     ust.className = "yorum-ust";
 
@@ -375,31 +435,156 @@ a{color:inherit;text-decoration:none}
     saat.className = "chat-saat";
     saat.textContent = tarihFormatla(mesaj.created_at);
 
-    const yazi = document.createElement("p");
-    yazi.className = "chat-mesaj-yazi";
-    yazi.textContent = mesaj.message || "";
-
     ust.append(isim,saat);
-    kart.append(ust,yazi);
+    kart.append(ust);
+
+    if(mesaj.message_type === "gif" && mesaj.gif_url){
+      /*
+       * Yalnızca önceden tanımlanmış GIF koleksiyonundaki
+       * URL'leri göster. Veritabanından gelen keyfî URL'leri
+       * doğrudan yüklemeyerek kötüye kullanım riskini azalt.
+       */
+      const izinliGif = GIF_KOLEKSIYONU.some(g => g.url === mesaj.gif_url);
+
+      if(izinliGif){
+        const img = document.createElement("img");
+        img.className = "chat-gif";
+        img.src = mesaj.gif_url;
+        img.alt = (mesaj.nickname || "İzleyici") + " tarafından gönderilen GIF";
+        img.loading = "lazy";
+        img.referrerPolicy = "no-referrer";
+        img.onerror = () => {
+          img.remove();
+          const p = document.createElement("p");
+          p.className = "chat-mesaj-yazi";
+          p.textContent = "Bu GIF artık görüntülenemiyor.";
+          kart.append(p);
+        };
+        kart.append(img);
+      }else{
+        const p = document.createElement("p");
+        p.className = "chat-mesaj-yazi";
+        p.textContent = "GIF kaynağı tanınmadı.";
+        kart.append(p);
+      }
+    }else{
+      const yazi = document.createElement("p");
+      yazi.className = "chat-mesaj-yazi";
+      yazi.textContent = mesaj.message || "";
+      kart.append(yazi);
+    }
+
     return kart;
   }
 
   function chatMesajiEkle(mesaj){
-    if(!mesaj || !mesaj.id || gorulenMesajlar.has(mesaj.id)) return;
+    if(!mesaj || !mesaj.id || gorulenMesajlar.has(String(mesaj.id))) return;
 
     const bos = chatMesajlar.querySelector(".chat-bos");
     if(bos) chatMesajlar.replaceChildren();
 
-    gorulenMesajlar.add(mesaj.id);
+    gorulenMesajlar.add(String(mesaj.id));
     chatMesajlar.append(chatMesajKarti(mesaj));
 
-    // Tarayıcıda gereksiz büyümeyi önlemek için son 150 mesajı tut.
     while(chatMesajlar.children.length > 150){
       chatMesajlar.removeChild(chatMesajlar.firstElementChild);
     }
-
     chatMesajlar.scrollTop = chatMesajlar.scrollHeight;
   }
+
+  function emojiPaneliniHazirla(){
+    const grid = $("emoji-grid");
+    EMOJILER.forEach(emoji=>{
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "emoji-sec";
+      button.textContent = emoji;
+      button.setAttribute("aria-label",emoji + " emojisini ekle");
+
+      button.addEventListener("click",()=>{
+        const start = chatMetin.selectionStart ?? chatMetin.value.length;
+        const end = chatMetin.selectionEnd ?? start;
+        const once = chatMetin.value.slice(0,start);
+        const sonra = chatMetin.value.slice(end);
+        const yeni = once + emoji + sonra;
+
+        if(yeni.length > 500){
+          chatBilgiGoster("Mesaj en fazla 500 karakter olabilir.",true);
+          return;
+        }
+
+        chatMetin.value = yeni;
+        const pos = start + emoji.length;
+        chatMetin.focus();
+        chatMetin.setSelectionRange(pos,pos);
+        chatKarakterSayi.textContent = String(yeni.length);
+        seciliGif = null;
+      });
+
+      grid.append(button);
+    });
+  }
+
+  function gifPaneliniHazirla(){
+    const grid = $("gif-grid");
+
+    GIF_KOLEKSIYONU.forEach(gif=>{
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "gif-sec";
+      button.setAttribute("aria-label",gif.ad + " GIF'ini gönder");
+
+      const img = document.createElement("img");
+      img.src = gif.url;
+      img.alt = gif.ad;
+      img.loading = "lazy";
+      img.referrerPolicy = "no-referrer";
+
+      img.onerror = ()=>{
+        button.disabled = true;
+        img.alt = "GIF yüklenemedi";
+        img.style.display = "none";
+        label.textContent = gif.ad + " — yüklenemedi";
+      };
+
+      const label = document.createElement("span");
+      label.textContent = gif.ad;
+
+      button.append(img,label);
+      button.addEventListener("click",()=>{
+        seciliGif = gif;
+        emojiPanel.hidden = true;
+        gifPanel.hidden = false;
+        $("emoji-toggle").setAttribute("aria-expanded","false");
+        $("gif-toggle").setAttribute("aria-expanded","true");
+        chatBilgiGoster("Seçilen GIF: " + gif.ad + ". Göndermek için «Mesajı gönder» düğmesine bas.");
+        chatMetin.focus();
+      });
+
+      grid.append(button);
+    });
+  }
+
+  $("emoji-toggle").addEventListener("click",()=>{
+    const ac = emojiPanel.hidden;
+    emojiPanel.hidden = !ac;
+    gifPanel.hidden = true;
+    $("emoji-toggle").setAttribute("aria-expanded",String(ac));
+    $("gif-toggle").setAttribute("aria-expanded","false");
+  });
+
+  $("gif-toggle").addEventListener("click",()=>{
+    const ac = gifPanel.hidden;
+    gifPanel.hidden = !ac;
+    emojiPanel.hidden = true;
+    $("gif-toggle").setAttribute("aria-expanded",String(ac));
+    $("emoji-toggle").setAttribute("aria-expanded","false");
+  });
+
+  chatMetin.addEventListener("input",()=>{
+    chatKarakterSayi.textContent = String(chatMetin.value.length);
+    if(chatMetin.value.trim()) seciliGif = null;
+  });
 
   async function chatBaslat(filmId,filmBaslik){
     aktifFilmId = String(filmId);
@@ -409,16 +594,16 @@ a{color:inherit;text-decoration:none}
 
     const {data,error} = await client
       .from("movie_chat_messages")
-      .select("id,movie_id,nickname,message,created_at")
+      .select("id,movie_id,nickname,message,message_type,gif_url,created_at")
       .eq("movie_id",aktifFilmId)
       .order("created_at",{ascending:true})
       .limit(100);
 
     if(error){
       console.error("Canlı sohbet yükleme hatası:",error);
-      chatBosMesaji("Sohbet yüklenemedi. Supabase tablosunu ve izinlerini kontrol et.");
+      chatBosMesaji("Sohbet yüklenemedi. Supabase tablo ve izinlerini kontrol et.");
       chatDurumAyarla("Bağlantı hatası");
-      chatBilgiGoster("Mesajlar yüklenemedi. SQL kurulumunu ve Supabase izinlerini kontrol et.",true);
+      chatBilgiGoster("Sohbet tablosu veya SELECT izni kontrol edilmeli.",true);
       return;
     }
 
@@ -450,7 +635,7 @@ a{color:inherit;text-decoration:none}
       .subscribe(status=>{
         if(status === "SUBSCRIBED"){
           chatDurumAyarla("Canlı",true);
-          chatBilgiGoster("Canlı bağlantı hazır. Sohbete katılabilirsin.");
+          chatBilgiGoster("Canlı bağlantı hazır. Emoji veya GIF seçebilirsin.");
         }else if(status === "CHANNEL_ERROR" || status === "TIMED_OUT"){
           chatDurumAyarla("Bağlantı sorunu");
           chatBilgiGoster("Canlı bağlantı kurulamadı. Supabase Realtime ayarını kontrol et.",true);
@@ -465,9 +650,8 @@ a{color:inherit;text-decoration:none}
     chatIsim.value = localStorage.getItem("bengusflix_chat_nickname") || "";
   }catch(_){}
 
-  chatMetin.addEventListener("input",()=>{
-    chatKarakterSayi.textContent = String(chatMetin.value.length);
-  });
+  emojiPaneliniHazirla();
+  gifPaneliniHazirla();
 
   chatIsim.addEventListener("change",()=>{
     const isim = chatIsim.value.trim().slice(0,30);
@@ -494,13 +678,12 @@ a{color:inherit;text-decoration:none}
       return;
     }
 
-    if(!message || message.length > 500){
+    if(!seciliGif && (!message || message.length > 500)){
       chatBilgiGoster("Mesajın 1–500 karakter arasında olmalı.",true);
       chatMetin.focus();
       return;
     }
 
-    // Basit istemci tarafı gönderim sınırı.
     const simdi = Date.now();
     if(simdi - sonGonderim < 1500){
       chatBilgiGoster("Yeni mesaj göndermeden önce biraz bekle.",true);
@@ -517,24 +700,37 @@ a{color:inherit;text-decoration:none}
         localStorage.setItem("bengusflix_chat_nickname",nickname);
       }catch(_){}
 
+      const kayit = seciliGif
+        ? {
+            movie_id:aktifFilmId,
+            nickname,
+            message:"GIF gönderdi",
+            message_type:"gif",
+            gif_url:seciliGif.url
+          }
+        : {
+            movie_id:aktifFilmId,
+            nickname,
+            message,
+            message_type:"text",
+            gif_url:null
+          };
+
       const {error} = await client
         .from("movie_chat_messages")
-        .insert({
-          movie_id:aktifFilmId,
-          nickname,
-          message
-        });
+        .insert(kayit);
 
       if(error) throw error;
 
       chatMetin.value = "";
       chatKarakterSayi.textContent = "0";
+      seciliGif = null;
       chatBilgiGoster("Mesaj gönderildi.");
       chatMetin.focus();
     }catch(error){
       console.error("Sohbet mesajı gönderme hatası:",error);
       chatBilgiGoster(
-        "Mesaj gönderilemedi. Supabase tablosunu, INSERT iznini ve bağlantıyı kontrol et.",
+        "Mesaj gönderilemedi. Supabase tablo izinlerini ve GIF alanlarını kontrol et.",
         true
       );
       sonGonderim = 0;
@@ -543,6 +739,11 @@ a{color:inherit;text-decoration:none}
       chatGonder.textContent = "Mesajı gönder";
     }
   });
+
+  function mesajGoster(metin,hata=false){
+    yorumMesaj.textContent = metin;
+    yorumMesaj.style.color = hata ? "#ff737c" : "var(--soluk)";
+  }
 
   try{
     const params = new URLSearchParams(location.search);
@@ -619,7 +820,7 @@ a{color:inherit;text-decoration:none}
       chatBaslat(film.id,film.title || "Film")
     ]);
 
-    yorumForm.addEventListener("submit",async function(event){
+    yorumForm.addEventListener("submit",async event=>{
       event.preventDefault();
 
       const name = yorumIsim.value.trim();
